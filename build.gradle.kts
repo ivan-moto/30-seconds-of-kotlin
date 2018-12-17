@@ -17,3 +17,8 @@ dependencies {
     testCompile("io.kotlintest:kotlintest-runner-junit5:${project.rootProject.ext["kotlintestVersion"]}")
     testRuntime("org.slf4j:slf4j-nop:${project.rootProject.ext["slf4jVersion"]}")
 }
+
+kotlin.sourceSets {
+    getByName("main").kotlin.srcDirs("src/main")
+    getByName("test").kotlin.srcDirs("src/test")
+}

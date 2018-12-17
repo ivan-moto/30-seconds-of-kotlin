@@ -16,7 +16,6 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 * [`all`](#all)
 * [`allEqual`](#allequal)
 * [`any`](#any)
-* [`arrayToCSV`](#arraytocsv)
 * [`bifurcate`](#bifurcate)
 * [`bifurcateBy`](#bifurcateby)
 * [`chunk`](#chunk)
@@ -115,14 +114,83 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 
 ### all
 
-Returns `true` if the provided predicate function returns `true` for all elements in a collection, `false` otherwise.
-
-Use `Array.prototype.every()` to test if all elements in the collection return `true` based on `fn`.
-Omit the second argument, `fn`, to use `Boolean` as a default.
+Returns `true` if the provided predicate function returns `true` for all elements in a list, `false` otherwise.
 
 ```kotlin
+fun <T> all(list: List<T>, predicate: (T) -> Boolean): Boolean =
+    list.all(predicate)
 ```
 
+## allEqual
+
+Check if all elements in a list are equal.
+
+```kotlin
+fun <T> allEqual(list: List<T>): Boolean =
+    if (list.isEmpty()) false else list.all { it == list[0] }
+```
+
+### any
+
+Returns `true` if the provided predicate function returns `true` for at least one element in a list, `false` otherwise.
+
+```kotlin
+fun <T> any(list: List<T>, predicate: (T) -> Boolean): Boolean =
+    list.any(predicate)
+```
+
+### bifurcate
+
+Splits values into two groups. For every element in a list, if the corresponding boolean in another list is true, add the element to the first group; otherwise, add it to the second group. 
+
+```kotlin
+fun <T> bifurcate(list: List<T>, filter: List<Boolean>): Pair<List<T>, List<T>> {
+    if (list.size != filter.size) throw IllegalArgumentException()
+
+    return list.zip(filter).partition { it.second }
+        .let { (list1, list2) -> list1.map { it.first } to list2.map { it.first } }
+}
+```
+
+### bifurcateBy
+
+Splits values into two groups according to a predicate function, which specifies which group an element in the input list belongs to. If the predicate function returns true, the list element belongs to the first group; otherwise, it belongs to the second group.
+
+```kotlin
+fun <T> bifurcateBy(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
+        list.partition(predicate)
+```
+
+### chunk
+
+Chunks a list into smaller lists of a specified size.
+
+```kotlin
+fun <T> chunk(list: List<T>, size: Int): List<List<T>> =
+        list.chunked(size)
+```
+
+### compact
+
+Removes "falsey" values from a list.
+
+Kotlin doesn't distinguish falsey values but they are (`false`, `null`, `0`, `""`, `empty collection`, and `NaN`).
+
+```kotlin
+fun <T> compact(list: List<T?>): List<T> {
+    fun isTruthy(t: T?): Boolean = when(t) {
+        null -> false
+        is Boolean -> t
+        is Double -> t != Double.NaN
+        is Number -> t.toInt() != 0
+        is String -> !t.isEmpty()
+        is Collection<*> -> !t.isEmpty()
+        else -> true
+    }
+    @Suppress("UNCHECKED_CAST")
+    return list.filter(::isTruthy) as List<T>
+}
+```
 
 ## License
 

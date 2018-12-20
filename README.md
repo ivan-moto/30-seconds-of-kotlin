@@ -22,6 +22,7 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 * [`compact`](#compact)
 * [`countBy`](#countby)
 * [`countOccurrences`](#countoccurrences)
+* [`concat`](#concat)
 * [`deepFlatten`](#deepflatten)
 * [`difference`](#difference)
 * [`differenceBy`](#differenceby)
@@ -31,14 +32,13 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 * [`dropRightWhile`](#droprightwhile)
 * [`dropWhile`](#dropwhile)
 * [`everyNth`](#everynth)
-* [`filterFalsy`](#filterfalsy)
 * [`filterNonUnique`](#filternonunique)
 * [`filterNonUniqueBy`](#filternonuniqueby)
 * [`findLast`](#findlast)
 * [`findLastIndex`](#findlastindex)
-* [`flatten`](#flatten)
 * [`forEachRight`](#foreachright)
 * [`groupBy`](#groupby)
+* [`hasDuplicates`](#hasDuplicates)
 * [`head`](#head)
 * [`indexOfAll`](#indexofall)
 * [`initial`](#initial)
@@ -145,8 +145,7 @@ Splits values into two groups. For every element in a list, if the corresponding
 
 ```kotlin
 fun <T> bifurcate(list: List<T>, filter: List<Boolean>): Pair<List<T>, List<T>> {
-    if (list.size != filter.size) throw IllegalArgumentException()
-
+    require(list.size == filter.size)
     return list.zip(filter).partition { it.second }
         .let { (list1, list2) -> list1.map { it.first } to list2.map { it.first } }
 }
@@ -158,7 +157,7 @@ Splits values into two groups according to a predicate function, which specifies
 
 ```kotlin
 fun <T> bifurcateBy(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
-        list.partition(predicate)
+    list.partition(predicate)
 ```
 
 ### chunk
@@ -167,7 +166,7 @@ Chunks a list into smaller lists of a specified size.
 
 ```kotlin
 fun <T> chunk(list: List<T>, size: Int): List<List<T>> =
-        list.chunked(size)
+    list.chunked(size)
 ```
 
 ### compact
@@ -190,6 +189,190 @@ fun <T> compact(list: List<T?>): List<T> {
     @Suppress("UNCHECKED_CAST")
     return list.filter(::isTruthy) as List<T>
 }
+```
+
+### countBy
+
+Groups the elements of a list based on the given function and returns the count of elements in each group.
+
+```kotlin
+fun <T, K> countBy(list: List<T>, function: (T) -> K): Map<K, Int> =
+    list.groupingBy(function).eachCount()
+```
+
+### countOccurrences
+
+Counts the occurrences of a value in a list.
+
+```kotlin
+fun <T> countOccurrences(list: List<T>, target: T): Int =
+    list.count { it == target }
+```
+
+### concat
+
+Concatenates multiple lists into a single list, preserving the order of the passed in elements.
+
+```kotlin
+fun <T> concat(first: List<T>, vararg others: List<T>): List<T> =
+    first.asSequence().plus(others.asSequence().flatten()).toList()
+```
+
+### difference
+
+Returns a list of elements contained in the first list that are not present in the second list. 
+
+```kotlin
+fun <T> difference(first: List<T>, second: List<T>): List<T> =
+    with(second.toSet()) {
+        first.filterNot { contains(it) }
+    }
+```
+
+### differenceBy
+
+Returns a list of elements contained in the first list that are not present in the second list, after applying the provided function to each list element of both.
+
+```kotlin
+fun <T, U> differenceBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> =
+    with(second.toSet().map(function)) {
+        first.filterNot { contains(function(it)) }
+    }
+```
+
+### differenceWith
+
+Filters out all elements from the first list for which the comparator function does not return `true` for that element and every element in the second list.
+
+```kotlin
+fun <T> differenceWith(first: List<T>, second: List<T>, function: (T, T) -> Boolean): List<T> =
+    first.filter { a -> second.none { b -> function(a, b) } }
+```
+
+### distinct
+
+Returns all distinct elements.
+
+```kotlin
+fun <T> distinct(list: List<T>): List<T> =
+    list.distinct()
+```
+
+### drop
+
+Returns a new list with `n` elements removed from the left.
+
+```kotlin
+fun <T> drop(list: List<T>, n: Int): List<T> =
+    list.drop(n)
+```
+
+### dropRight
+
+Returns a new list with `n` elements removed from the right.
+
+```kotlin
+fun <T> dropRight(list: List<T>, n: Int): List<T> =
+    list.dropLast(n)
+```
+
+### dropRightWhile
+
+Removes elements from the end of a list until the passed function returns `true`. Returns the remaining elements in the list.
+
+```kotlin
+fun <T> dropRightWhile(list: List<T>, predicate: (T) -> Boolean): List<T> =
+    list.dropLastWhile(predicate)
+```
+
+### dropWhile
+
+Removes elements from the beginning of a list until the passed function returns `true`. Returns the remaining elements in the list.
+
+```kotlin
+fun <T> dropWhile(list: List<T>, predicate: (T) -> Boolean): List<T> =
+    list.dropWhile(predicate)
+```
+
+### everyNth
+
+Returns every nth element in a list.
+
+```kotlin
+fun <T> everyNth(list: List<T>, nth: Int): List<T> =
+    list.windowed(nth, nth, partialWindows = false).map { it.last() }
+```
+
+### filterNonUnique
+
+Filters out the non-unique values in a list.
+
+```kotlin
+fun <T> filterNonUnique(list: List<T>): List<T> =
+    list.toSet().toList()
+```
+
+### filterNonUniqueBy
+
+Filters out the non-unique values in an list, based on a provided comparator function.
+
+```kotlin
+fun <T> filterNonUniqueBy(list: List<T>, function: (T, T) -> Boolean): List<T> =
+    list.filter { a -> list.none { b -> function(a, b) } }
+```
+
+### findLast
+
+Returns the last element for which the provided function returns true, or null if non is found.
+
+```kotlin
+fun <T> findLast(list: List<T>, predicate: (T) -> Boolean): T? =
+    list.findLast(predicate)
+```
+
+### findLastIndex
+
+Returns the index of the last element for which the provided function returns true, or -1 if non is found.
+
+```kotlin
+fun <T> findLastIndex(list: List<T>, predicate: (T) -> Boolean): Int =
+    list.indexOfLast(predicate)
+```
+
+### forEachRight
+
+Executes a provided function once for each list element, starting from the list's last element.
+
+```kotlin
+fun <T> forEachRight(list: List<T>, action: (T) -> Unit): Unit =
+    list.reversed().forEach(action)
+```
+
+### groupBy
+
+Groups the elements of an list based on the given function.
+
+```kotlin
+fun <T, K> groupBy(list: List<T>, function: (T) -> K): Map<K, List<T>> =
+    list.groupBy(function)
+```
+
+### hasDuplicates
+
+Returns true if duplicate values exist in list, false otherwise.
+
+```kotlin
+fun <T> hasDuplicates(list: List<T>): Boolean =
+    list.toSet().size != list.size
+```
+
+### head
+
+Returns the head of a list.
+
+```kotlin
+fun <T> head(list: List<T>): T =
+    list.first()
 ```
 
 ## License

@@ -323,7 +323,7 @@ fun <T> filterNonUniqueBy(list: List<T>, function: (T, T) -> Boolean): List<T> =
 
 ### findLast
 
-Returns the last element for which the provided function returns true, or null if non is found.
+Returns the last element for which the provided function returns true, or null if none is found.
 
 ```kotlin
 fun <T> findLast(list: List<T>, predicate: (T) -> Boolean): T? =
@@ -332,7 +332,7 @@ fun <T> findLast(list: List<T>, predicate: (T) -> Boolean): T? =
 
 ### findLastIndex
 
-Returns the index of the last element for which the provided function returns true, or -1 if non is found.
+Returns the index of the last element for which the provided function returns true, or -1 if none is found.
 
 ```kotlin
 fun <T> findLastIndex(list: List<T>, predicate: (T) -> Boolean): Int =

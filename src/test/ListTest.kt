@@ -1,3 +1,4 @@
+import com.google.common.math.LongMath
 import io.kotlintest.properties.forAll
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
@@ -33,6 +34,11 @@ class ListTest: StringSpec() {
             forAll { first: List<String>, second: List<String> ->
                 difference(first, second).filter { second.contains(it) }.isEmpty()
             }
+        }
+
+        "reduceSuccessive" {
+            reduceSuccessive(listOf('H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!'), "", String::plus)
+                .shouldBe(listOf("H", "He", "Hel", "Hell", "Hello", "Hello,", "Hello, ", "Hello, W", "Hello, Wo", "Hello, Wor", "Hello, Worl", "Hello, World", "Hello, World!"))
         }
     }
 }

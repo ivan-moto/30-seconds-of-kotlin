@@ -26,6 +26,7 @@ fun <T> compact(list: List<T?>): List<T> {
         is Double -> t != Double.NaN
         is Number -> t.toInt() != 0
         is String -> !t.isEmpty()
+        is Array<*> -> t.size != 0
         is Collection<*> -> !t.isEmpty()
         else -> true
     }
@@ -42,10 +43,11 @@ fun <T> countOccurrences(list: List<T>, target: T): Int =
 fun <T> concat(first: List<T>, vararg others: List<T>): List<T> =
     first.asSequence().plus(others.asSequence().flatten()).toList()
 
+fun <T, U> crossProduct(first: List<T>, second: List<U>): List<Pair<T, U>> =
+    first.flatMap { a -> second.map { b -> a to b } }
+
 fun <T> difference(first: List<T>, second: List<T>): List<T> =
-    with(second.toSet()) {
-        first.filterNot { contains(it) }
-    }
+    (first subtract second).toList()
 
 fun <T, U> differenceBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> =
     with(second.toSet().map(function)) {
@@ -70,14 +72,17 @@ fun <T> dropRightWhile(list: List<T>, predicate: (T) -> Boolean): List<T> =
 fun <T> dropWhile(list: List<T>, predicate: (T) -> Boolean): List<T> =
     list.dropWhile(predicate)
 
+fun <T> endsWith(list: List<T>, subList: List<T>): Boolean =
+    list.takeLast(subList.size) == subList
+
 fun <T> everyNth(list: List<T>, nth: Int): List<T> =
     list.windowed(nth, nth, partialWindows = false).map { it.last() }
 
 fun <T> filterNonUnique(list: List<T>): List<T> =
-    list.toSet().toList()
+    list.distinct()
 
-fun <T> filterNonUniqueBy(list: List<T>, function: (T, T) -> Boolean): List<T> =
-    list.filter { a -> list.none { b -> function(a, b) } }
+fun <T, K> filterNonUniqueBy(list: List<T>, function: (T) -> K): List<T> =
+    list.distinctBy(function)
 
 fun <T> findLast(list: List<T>, predicate: (T) -> Boolean): T? =
     list.findLast(predicate)
@@ -94,5 +99,195 @@ fun <T, K> groupBy(list: List<T>, function: (T) -> K): Map<K, List<T>> =
 fun <T> hasDuplicates(list: List<T>): Boolean =
     list.toSet().size != list.size
 
+tailrec fun <T> hasSubList(list: List<T>, subList: List<T>): Boolean =
+    when {
+        subList.isEmpty() -> true
+        list.isEmpty() -> subList.isEmpty()
+        list.take(subList.size) == subList -> true
+        else -> hasSubList(list.drop(1), subList)
+    }
+
 fun <T> head(list: List<T>): T =
     list.first()
+
+fun <T> indexOfAll(list: List<T>, target: T): List<Int> =
+    list.withIndex().filter { it.value == target }.map { it.index }
+
+fun <T> initial(list: List<T>): List<T> =
+    list.dropLast(1)
+
+fun <T> initialize2DList(width: Int, height: Int, value: T): List<List<T>> =
+    List(height) { List(width) { value } }
+
+fun initializeListWithRange(start: Int, stop: Int, step: Int): List<Int> =
+    (start..stop step step).toList()
+
+fun <T> initializeListWithValue(size: Int, value: T): List<T> =
+    List(size) { value }
+
+fun <T> intersection(first: List<T>, second: List<T>): List<T> =
+    (first intersect second).toList()
+
+fun <T, U> intersectionBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> =
+    with(second.toSet().map(function)) {
+        first.filter { contains(function(it)) }
+    }
+
+fun <T> intersectionWith(first: List<T>, second: List<T>, function: (T, T) -> Boolean): List<T> =
+    first.filter { a -> second.any { b -> function(a, b) } }
+
+fun <T> join(list: List<T>, separator: String = ", "): String =
+    list.joinToString(separator)
+
+fun <T> last(list: List<T>): T =
+    list.last()
+
+fun <T> longest(list: List<Collection<T>>): Collection<T>? =
+    list.maxBy { it.size }
+
+fun <T, U> mapObject(list: List<T>, function: (T) -> U): Map<T, U> =
+    list.associateWith(function)
+
+fun <T : Comparable<T>> maxN(list: List<T>, n: Int): List<T> =
+    list.sortedDescending().take(n)
+
+fun <T : Comparable<T>> minN(list: List<T>, n: Int): List<T> =
+    list.sorted().take(n)
+
+fun <T> none(list: List<T>, predicate: (T) -> Boolean): Boolean =
+    list.none(predicate)
+
+fun <T> nthElement(list: List<T>, n: Int): T =
+   list[n]
+
+fun <T> offset(list: List<T>, offset: Int): List<T> =
+    list.slice(offset until list.size) + list.slice(0 until offset)
+
+fun <T> partition(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
+    list.partition(predicate)
+
+fun <T, U, V> product(first: List<T>, second: List<U>, function: (T, U) -> V): List<V> =
+    first.flatMap { t -> second.map { u -> function(t, u) } }
+
+fun <T> pull(list: List<T>, vararg elements: T): List<T> =
+    with(elements.toSet()) {
+       list.filterNot { contains(it) }
+    }
+
+fun <T> pullAtIndex(list: List<T>, vararg indices: Int): List<T> =
+    with(indices.toSet()) {
+        list.filterIndexed { index, _ -> !contains(index) }
+    }
+
+fun <T> pullAtValue(list: List<T>, vararg elements: T): List<T> =
+    with(elements.toSet()) {
+        list.filter { contains(it) }
+    }
+
+fun <T, U> reduceSuccessive(list: List<T>, identity: U, function: (U, T) -> U): List<U> {
+    fun <T> List<T>.lastOrElse(t: T): T = lastOrNull() ?: t
+    return list.fold(emptyList()) { acc, t -> acc + function(acc.lastOrElse(identity), t) }
+}
+
+fun <T> reject(list: List<T>, predicate: (T) -> Boolean): List<T> =
+    list.filterNot(predicate)
+
+fun <T> remove(list: List<T>, predicate: (T) -> Boolean): List<T> =
+    list.filter(predicate)
+
+fun <T> sample(list: List<T>): T =
+    list.random()
+
+fun <T> sampleSize(list: List<T>, n: Int): List<T> =
+    list.shuffled().take(n)
+
+fun <T> shank(list: List<T>, start: Int = 0, deleteCount: Int = 0, vararg elements: T): List<T> =
+    list.slice(0 until start) + elements + list.drop(start + deleteCount)
+
+fun <T> shuffle(list: List<T>): List<T> =
+    list.shuffled()
+
+fun <T : Comparable<T>> sortOrder(list: List<T>): Int =
+    with(list.sorted()) {
+        when {
+            this == list ->  1
+            this.asReversed() == list -> -1
+            else -> 0
+        }
+    }
+
+fun <T> startsWith(list: List<T>, subList: List<T>): Boolean =
+    list.take(subList.size) == subList
+
+fun <T> symmetricDifference(first: List<T>, second: List<T>): List<T> =
+    ((first subtract second) + (second subtract first)).toList()
+
+fun <T, U> symmetricDifferenceBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> {
+    val mapFirst = first.toSet().map(function)
+    val mapSecond = second.toSet().map(function)
+    return first.filterNot { mapSecond.contains(function(it)) } + second.filterNot { mapFirst.contains(function(it)) }
+}
+
+fun <T> symmetricDifferenceWith(first: List<T>, second: List<T>, function: (T, T) -> Boolean): List<T> =
+    first.filter { a -> second.none { b -> function(a ,b) } } +
+        second.filter { b -> first.none { a -> function(a, b) } }
+
+fun <T> tail(list: List<T>): List<T> =
+    list.drop(1)
+
+fun <T> take(list: List<T>, n: Int): List<T> =
+    list.take(n)
+
+fun <T> takeRight(list: List<T>, n: Int): List<T> =
+    list.takeLast(n)
+
+fun <T> takeRightWhile(list: List<T>, predicate: (T) -> Boolean): List<T> =
+    list.takeLastWhile(predicate)
+
+fun <T> takeWhile(list: List<T>, predicate: (T) -> Boolean): List<T> =
+    list.takeWhile(predicate)
+
+fun <T> union(first: List<T>, second: List<T>): List<T> =
+    (first union second).toList()
+
+fun <T, U> unionBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> {
+    val mapFirst = first.toSet().map(function)
+    return (first.toSet() + second.toSet().filterNot { mapFirst.contains(function(it)) }).toList()
+}
+
+fun <T> unionWith(first: List<T>, second: List<T>, function: (T, T) -> Boolean): List<T> =
+    (first.filter { a -> second.any { b -> function(a, b) } } union
+            second.filter { b -> first.any { a -> function(a, b) } }).toList()
+
+fun <T, U> unzip(list: List<Pair<T, U>>): Pair<List<T>, List<U>> =
+    list.unzip()
+
+fun <T, U> zip(first: List<T>, second: List<U>): List<Pair<T, U>> =
+    first.zip(second)
+
+fun <T, U> zipAll(first: List<T>, defaultT: T, second: List<U>, defaultU: U): List<Pair<T, U>> {
+    val firstIt = first.iterator()
+    val secondIt = second.iterator()
+    return object : Iterator<Pair<T, U>> {
+        override fun hasNext(): Boolean =
+            firstIt.hasNext() || secondIt.hasNext()
+
+        override fun next(): Pair<T, U> {
+            val t = if (firstIt.hasNext()) firstIt.next() else defaultT
+            val u = if (secondIt.hasNext()) secondIt.next() else defaultU
+            return t to u
+        }
+    }.asSequence().toList()
+}
+
+fun <K, V> zipKeysValues(keys: List<K>, values: List<V>): Map<K, V> =
+    keys.zip(values).toMap()
+
+fun <T, U, V> zipWith(first: List<T>, second: List<U>, function: (T, U) -> V): List<V> =
+    first.zip(second).map { (t, u) -> function(t, u) }
+
+fun <T> zipWithIndex(list: List<T>): List<Pair<Int, T>> =
+    list.withIndex().map { it.index to it.value }
+
+fun <T> zipWithNext(list: List<T>): List<Pair<T, T>> =
+    list.zipWithNext()

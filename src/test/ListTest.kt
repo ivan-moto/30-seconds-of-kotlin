@@ -1,4 +1,3 @@
-import com.google.common.math.LongMath
 import io.kotlintest.properties.forAll
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec

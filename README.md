@@ -2,7 +2,7 @@
 
 # 30 seconds of Kotlin
 
-> Curated collection of useful Kotlin 1.3 snippets that you can understand quickly.
+> Curated collection of useful Kotlin 1.3 snippets that you can understand quickly, using only stdlib functionality.
 
 ## Table of Contents
 
@@ -1080,6 +1080,15 @@ fun <T> zipWithNext(list: List<T>): List<Pair<T, T>> =
     list.zipWithNext()
 ```
 
+---
+
+#### Related projects
+
+* [30 Seconds of Code](https://github.com/30-seconds/30-seconds-of-code)
+* [30 Seconds of Java](https://github.com/shekhargulati/30-seconds-of-java)
+* [30 Seconds of React](https://github.com/30-seconds/30-seconds-of-react)
+* [30 Seconds of Python](https://github.com/kriadmin/30-seconds-of-python-code)
+* [30 Seconds of PHP](https://github.com/appzcoder/30-seconds-of-php-code)
 
 ## License
 

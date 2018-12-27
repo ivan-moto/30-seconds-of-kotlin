@@ -256,7 +256,7 @@ fun <T> difference(first: List<T>, second: List<T>): List<T> =
 Returns a list of elements contained in the first list that are not present in the second list, after applying the provided function to each list element of both.
 
 ```kotlin
-fun <T, U> differenceBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> =
+fun <T, R> differenceBy(first: List<T>, second: List<T>, function: (T) -> R): List<T> =
     with(second.toSet().map(function)) {
         first.filterNot { contains(function(it)) }
     }
@@ -526,7 +526,7 @@ intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor) // [2.1]
 ```
 
 ```kotlin
-fun <T, U> intersectionBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> =
+fun <T, R> intersectionBy(first: List<T>, second: List<T>, function: (T) -> R): List<T> =
     with(second.toSet().map(function)) {
         first.filter { contains(function(it)) }
     }
@@ -584,7 +584,7 @@ mapObject([1, 2, 3], a => a * a) // { 1: 1, 2: 4, 3: 9 }
 ```
 
 ```kotlin
-fun <T, U> mapObject(list: List<T>, function: (T) -> U): Map<T, U> =
+fun <T, R> mapObject(list: List<T>, function: (T) -> R): Map<T, R> =
     list.associateWith(function)
 ```
 
@@ -662,7 +662,7 @@ fun <T> partition(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<
 Creates a cross product: applying the provided function to each value in the first list along with each value in the second list
 
 ```kotlin
-fun <T, U, V> product(first: List<T>, second: List<U>, function: (T, U) -> V): List<V> =
+fun <T, U, R> product(first: List<T>, second: List<U>, function: (T, U) -> R): List<R> =
     first.flatMap { t -> second.map { u -> function(t, u) } }
 ```
 
@@ -729,7 +729,7 @@ reduceSuccessive([1, 2, 3, 4, 5, 6], 0, (acc, val) => acc + val) // [1, 3, 6, 10
 ```
 
 ```kotlin
-fun <T, U> reduceSuccessive(list: List<T>, identity: U, function: (U, T) -> U): List<U> {
+fun <T, R> reduceSuccessive(list: List<T>, identity: R, function: (R, T) -> R): List<R> {
     fun <T> List<T>.lastOrElse(t: T): T = lastOrNull() ?: t
     return list.fold(emptyList()) { acc, t -> acc + function(acc.lastOrElse(identity), t) }
 }
@@ -870,7 +870,7 @@ symmetricDifferenceBy([2.1, 1.2], [2.3, 3.4], Math.floor) // [1.2, 3.4]
 ```
 
 ```kotlin 
-fun <T, U> symmetricDifferenceBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> {
+fun <T, R> symmetricDifferenceBy(first: List<T>, second: List<T>, function: (T) -> R): List<T> {
     val mapFirst = first.toSet().map(function)
     val mapSecond = second.toSet().map(function)
     return first.filterNot { mapSecond.contains(function(it)) } + second.filterNot { mapFirst.contains(function(it)) }
@@ -977,7 +977,7 @@ unionBy([2.1], [1.2, 2.3], Math.floor) // [2.1, 1.2]
 ```
 
 ```kotlin
-fun <T, U> unionBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> {
+fun <T, R> unionBy(first: List<T>, second: List<T>, function: (T) -> R): List<T> {
     val mapFirst = first.toSet().map(function)
     return (first.toSet() + second.toSet().filterNot { mapFirst.contains(function(it)) }).toList()
 }
@@ -1058,7 +1058,7 @@ fun <K, V> zipKeysValues(keys: List<K>, values: List<V>): Map<K, V> =
 Returns a list formed by applying the given function to elements of matching indices in both lists. The returned list has length of the shortest list, so the longer list has some ignored elements.
 
 ```kotlin
-fun <T, U, V> zipWith(first: List<T>, second: List<U>, function: (T, U) -> V): List<V> =
+fun <T, U, R> zipWith(first: List<T>, second: List<U>, function: (T, U) -> R): List<R> =
     first.zip(second).map { (t, u) -> function(t, u) }
 ```
 

@@ -49,7 +49,7 @@ fun <T, U> crossProduct(first: List<T>, second: List<U>): List<Pair<T, U>> =
 fun <T> difference(first: List<T>, second: List<T>): List<T> =
     (first subtract second).toList()
 
-fun <T, U> differenceBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> =
+fun <T, R> differenceBy(first: List<T>, second: List<T>, function: (T) -> R): List<T> =
     with(second.toSet().map(function)) {
         first.filterNot { contains(function(it)) }
     }
@@ -128,7 +128,7 @@ fun <T> initializeListWithValue(size: Int, value: T): List<T> =
 fun <T> intersection(first: List<T>, second: List<T>): List<T> =
     (first intersect second).toList()
 
-fun <T, U> intersectionBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> =
+fun <T, R> intersectionBy(first: List<T>, second: List<T>, function: (T) -> R): List<T> =
     with(second.toSet().map(function)) {
         first.filter { contains(function(it)) }
     }
@@ -145,7 +145,7 @@ fun <T> last(list: List<T>): T =
 fun <T> longest(list: List<Collection<T>>): Collection<T>? =
     list.maxBy { it.size }
 
-fun <T, U> mapObject(list: List<T>, function: (T) -> U): Map<T, U> =
+fun <T, R> mapObject(list: List<T>, function: (T) -> R): Map<T, R> =
     list.associateWith(function)
 
 fun <T : Comparable<T>> maxN(list: List<T>, n: Int): List<T> =
@@ -166,7 +166,7 @@ fun <T> offset(list: List<T>, offset: Int): List<T> =
 fun <T> partition(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
     list.partition(predicate)
 
-fun <T, U, V> product(first: List<T>, second: List<U>, function: (T, U) -> V): List<V> =
+fun <T, U, R> product(first: List<T>, second: List<U>, function: (T, U) -> R): List<R> =
     first.flatMap { t -> second.map { u -> function(t, u) } }
 
 fun <T> pull(list: List<T>, vararg elements: T): List<T> =
@@ -184,7 +184,7 @@ fun <T> pullAtValue(list: List<T>, vararg elements: T): List<T> =
         list.filter { contains(it) }
     }
 
-fun <T, U> reduceSuccessive(list: List<T>, identity: U, function: (U, T) -> U): List<U> {
+fun <T, R> reduceSuccessive(list: List<T>, identity: R, function: (R, T) -> R): List<R> {
     fun <T> List<T>.lastOrElse(t: T): T = lastOrNull() ?: t
     return list.fold(emptyList()) { acc, t -> acc + function(acc.lastOrElse(identity), t) }
 }
@@ -222,7 +222,7 @@ fun <T> startsWith(list: List<T>, subList: List<T>): Boolean =
 fun <T> symmetricDifference(first: List<T>, second: List<T>): List<T> =
     ((first subtract second) + (second subtract first)).toList()
 
-fun <T, U> symmetricDifferenceBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> {
+fun <T, R> symmetricDifferenceBy(first: List<T>, second: List<T>, function: (T) -> R): List<T> {
     val mapFirst = first.toSet().map(function)
     val mapSecond = second.toSet().map(function)
     return first.filterNot { mapSecond.contains(function(it)) } + second.filterNot { mapFirst.contains(function(it)) }
@@ -250,7 +250,7 @@ fun <T> takeWhile(list: List<T>, predicate: (T) -> Boolean): List<T> =
 fun <T> union(first: List<T>, second: List<T>): List<T> =
     (first union second).toList()
 
-fun <T, U> unionBy(first: List<T>, second: List<T>, function: (T) -> U): List<T> {
+fun <T, R> unionBy(first: List<T>, second: List<T>, function: (T) -> R): List<T> {
     val mapFirst = first.toSet().map(function)
     return (first.toSet() + second.toSet().filterNot { mapFirst.contains(function(it)) }).toList()
 }
@@ -283,7 +283,7 @@ fun <T, U> zipAll(first: List<T>, defaultT: T, second: List<U>, defaultU: U): Li
 fun <K, V> zipKeysValues(keys: List<K>, values: List<V>): Map<K, V> =
     keys.zip(values).toMap()
 
-fun <T, U, V> zipWith(first: List<T>, second: List<U>, function: (T, U) -> V): List<V> =
+fun <T, U, R> zipWith(first: List<T>, second: List<U>, function: (T, U) -> R): List<R> =
     first.zip(second).map { (t, u) -> function(t, u) }
 
 fun <T> zipWithIndex(list: List<T>): List<Pair<Int, T>> =

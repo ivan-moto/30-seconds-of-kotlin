@@ -96,6 +96,33 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 
 </details>
 
+### Function
+
+<details>
+<summary>View contents</summary>
+
+* [`allOf`](#allof)
+* [`andThen`](#andthen)
+* [`anyOf`](#anyof)
+* [`applyFirst`](#applyfirst)
+* [`applySecond`](#applysecond)
+* [`compose`](#compose)
+* [`constant`](#constant)
+* [`curry`](#curry)
+* [`diverge`](#diverge)
+* [`identity`](#identity)
+* [`lift`](#lift)
+* [`memoize`](#memoize)
+* [`noneOf`](#noneof)
+* [`retry`](#retry)
+* [`sequence`](#sequence)
+* [`swapArgs`](#swapargs)
+* [`time`](#time)
+* [`uncurry`](#uncurry)
+* [`unlift`](#unlift)
+
+</details>
+
 ---
 
 ## List
@@ -1078,6 +1105,196 @@ Returns a list of pairs built from the elements of the list along with the eleme
 ```kotlin
 fun <T> zipWithNext(list: List<T>): List<Pair<T, T>> =
     list.zipWithNext()
+```
+
+---
+
+## Function
+
+### allOf
+
+Given a list of predicates, returns a single predicate that evaluates to true if all of the predicates evaluate to true, and false otherwise. 
+
+```kotlin
+fun <T> allOf(vararg predicates: (T) -> Boolean): (T) -> Boolean =
+    { t -> predicates.all { it(t) } }
+```
+
+### andThen
+
+Returns a function which first applies `this` function to the input, and then applies the `after` function to the result. 
+
+```kotlin
+String::decapitalize andThen String::hashCode
+```
+
+```kotlin
+infix fun <T, U, R> ((T) -> U).andThen(after: (U) -> R): (T) -> R = { after(this(it)) }
+```
+
+### anyOf
+
+Given a list of predicates, returns a single predicate that evaluates to true if any of the predicates evaluate to true, and false otherwise. 
+
+```kotlin
+fun <T> anyOf(vararg predicates: (T) -> Boolean): (T) -> Boolean =
+    { t -> predicates.any { it(t) } }
+```
+
+### applyFirst
+
+Applies the first argument of a curried function, returning a function taking 1 less argument. 
+
+```kotlin
+fun <T, U, R> applyFirst(function: (T) -> (U) -> R, first: T): (U) -> R = function(first)
+```
+
+### applySecond
+
+Applies the second argument of a curried function, returning a function taking 1 less argument. 
+
+```kotlin
+fun <T, U, R> applySecond(function: (T) -> (U) -> R, second: U): (T) -> R = { t -> function(t)(second) }
+```
+
+### compose
+
+Returns a function which first applies the `before` function to the input, and then applies `this` function to the result. 
+
+```kotlin
+String::hashCode compose String::decapitalize
+```
+
+```kotlin
+infix fun <T, U, V> ((U) -> V).compose(before: (T) -> U): (T) -> V = { this(before(it)) }
+```
+
+### constant
+
+Returns a function which always evaluates to the same result, no matter the input. 
+
+```kotlin
+fun <T, R> constant(result: R): (T) -> R = { result }
+```
+
+### curry 
+
+Transforms a function that takes multiple arguments into one that takes a single argument - and returns another function also taking a single argument. 
+
+```kotlin
+fun <T, U, R> ((T, U) -> R).curry(): (T) -> (U) -> R = { t -> { u -> this(t, u) } }
+```
+
+### diverge
+
+Tests a value against a predicate and executes either the success function or failure function. 
+
+```kotlin
+fun <T, R> diverge(t: T, predicate: (T) -> Boolean, onSuccess: (T) -> R, onFailure: (T) -> R): R =
+    if (predicate(t)) onSuccess(t) else onFailure(t)
+```
+
+### identity
+
+Returns a function that always returns its input argument. 
+
+```kotlin
+fun <T> identity(): (T) -> T = { it }
+```
+
+### lift
+
+Takes a function operating on raw values and lifts it to a function operating on `Result` values. 
+
+```kotlin
+fun <T, U, R> lift(function: (T) -> (U) -> R): (Result<T>) -> (Result<U>) -> Result<R> =
+    { resultT -> { resultU -> resultT.mapCatching(function).mapCatching { resultU.map(it) }.mapCatching { it.getOrThrow() } } }
+```
+
+### memoize
+
+Returns a memoized version of the given function - the function now caches all of its results. 
+
+```kotlin
+fun <T, R> memoize(function: (T) -> R): (T) -> R =
+    with(ConcurrentHashMap<T, R>()) {
+        { t -> computeIfAbsent(t) { function(it) } }
+    }
+```
+
+### noneOf
+
+Given a list of predicates, returns a single predicate that evaluates to true if none of the predicates evaluate to true, and false otherwise. 
+
+```kotlin
+fun <T> noneOf(vararg predicates: (T) -> Boolean): (T) -> Boolean =
+    { t -> !predicates.any { it(t) } }
+```
+
+### retry
+
+Returns a retrying version of the given function. 
+
+> This implementation is based on Pierre-Yves Saumont's implementation in [The Joy of Kotlin](https://www.manning.com/books/the-joy-of-kotlin)
+
+```kotlin
+fun <T, R> retry(times: Int, delay: Int, timeUnit: TimeUnit = TimeUnit.MILLISECONDS, function: (T) -> R): (T) -> Result<R> {
+    tailrec fun retry(input: T, result: Result<R>, times: Int): () -> Result<R> {
+        if (result.isSuccess || times <= 0) {
+            return { result }
+        } else {
+            Thread.sleep(TimeUnit.MILLISECONDS.convert(delay.toLong(), timeUnit))
+            return retry(input, runCatching { function(input) }, times - 1)
+        }
+    }
+    return { t -> retry(t, runCatching { function(t) }, times - 1)() }
+}
+```
+
+### sequence
+
+Reduces many functions into a single function which produces a list. 
+
+```kotlin
+fun <T, R> sequence(list: List<(T) -> R>): (T) -> List<R> = { t -> list.map { it(t) } }
+```
+
+### swapArgs
+
+Swaps the arguments of a curried function. 
+
+```kotlin
+fun <T, U, R> ((T) -> (U) -> R).swapArgs(): (U) -> (T) -> R = { u -> { t -> this(t)(u) } }
+```
+
+### time
+
+Times a function and returns the time as well as the result. 
+
+```kotlin
+fun <R> time(timeUnit: TimeUnit = TimeUnit.NANOSECONDS, function: () -> R): Pair<Long, Result<R>> {
+    val start = System.nanoTime()
+    val result = runCatching(function)
+    val time = System.nanoTime() - start
+    return timeUnit.convert(time, TimeUnit.NANOSECONDS) to result
+}
+```
+
+### uncurry
+
+Transforms a series of single argument functions into a single function with multiple arguments. 
+
+```kotlin
+fun <T, U, R> ((T) -> (U) -> R).uncurry(): (T, U) -> R = { t, u -> this(t)(u) }
+```
+
+### unlift
+
+Takes a function operating on `Result` values and unlifts it to one operating on raw values. 
+
+```kotlin
+fun <T, U, R> unlift(function: (Result<T>) -> (Result<U>) -> Result<R>): (T) -> (U) -> R =
+    { t -> { u -> function(Result.success(t))(Result.success(u)).getOrThrow() } }
 ```
 
 ---

@@ -123,6 +123,24 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 
 </details>
 
+### Lazy
+
+<details>
+<summary>View contents</summary>
+
+* [`asSequence`](#assequence)
+* [`filter`](#filter)
+* [`flatMap`](#flatmap)
+* [`getOrDefault`](#getordefault)
+* [`lift`](#lift)
+* [`map`](#map)
+* [`map2`](#map2)
+* [`sequence`](#sequence)
+* [`sequenceCatching`](#sequencecatching)
+* [`test`](#test)
+
+</details>
+
 ---
 
 ## List
@@ -1295,6 +1313,104 @@ Takes a function operating on `Result` values and unlifts it to one operating on
 ```kotlin
 fun <T, U, R> unlift(function: (Result<T>) -> (Result<U>) -> Result<R>): (T) -> (U) -> R =
     { t -> { u -> function(Result.success(t))(Result.success(u)).getOrThrow() } }
+```
+
+---
+
+## Lazy
+
+### asSequence
+
+Transforms a lazy value into a lazy list, i.e. a Sequence. 
+
+```kotlin
+fun <T> Lazy<T>.asSequence(): Sequence<T> = object : Iterator<T> {
+        override fun hasNext(): Boolean = true
+        override fun next(): T = value
+    }.asSequence()
+```
+
+### filter
+
+Evaluates a predicate against the value produced by the Lazy and returns a successful Result if the predicate evaluates to true, or a failure Result otherwise. 
+
+```kotlin
+fun <T> Lazy<T>.filter(predicate: (T) -> Boolean): Lazy<Result<T>> =
+    lazy { if (predicate(value)) Result.success(value) else Result.failure(IllegalArgumentException("Predicate evaluated to false.")) }
+```
+
+### flatMap
+
+Applies a function that produces a Lazy to the value produced by `this` Lazy. 
+
+```kotlin
+fun <T, R> Lazy<T>.flatMap(function: (T) -> Lazy<R>): Lazy<R> =
+    lazy { function(value).value }
+
+```
+
+### getOrDefault
+
+Safely gets the value produced by `this` Lazy and optionally returns the default value if any exception is thrown by the Lazy. 
+The initialization of the value produced by a Lazy may throw an exception, this method guarantees that no exceptions are thrown while initializing that value. 
+
+```kotlin
+fun <R, T : R> Lazy<T>.getOrDefault(default: R): R =
+    runCatching { value }.getOrDefault(default)
+```
+
+### lift
+
+Takes a function operating on raw values and lifts it to a function operating on Lazy values.
+
+```kotlin
+fun <T, U, R> lift(function: (T) -> (U) -> R): (Lazy<T>) -> (Lazy<U>) -> Lazy<R> =
+    { lazyT -> { lazyU -> lazy { function(lazyT.value)(lazyU.value) } } }
+```
+
+### map
+
+Applies a function to the value produced by `this` Lazy. 
+
+```kotlin
+fun <T, R> Lazy<T>.map(function: (T) -> R): Lazy<R> =
+    lazy { function(value) }
+```
+
+### map2
+
+Applies a function taking 2 raw values to 2 values produced by Lazys, and returns another Lazy. 
+
+```kotlin
+fun <T, U, R> map2(lazy1: Lazy<T>, lazy2: Lazy<U>, function: (T) -> (U) -> R): Lazy<R> =
+    lazy { function(lazy1.value)(lazy2.value) }
+```
+
+### sequence
+
+Reduces many Lazys into a single Lazy which produces a list.
+
+```kotlin
+fun <T> sequence(list: List<Lazy<T>>): Lazy<List<T>> =
+    lazy { list.map { it.value } }
+```
+
+### sequenceCatching
+
+Reduces many Lazys into a single Lazy which produces a Result of type list. If any of the passed in Lazys throw an exception the Result will be a failure. 
+
+```kotlin
+fun <T> sequenceCatching(list: List<Lazy<T>>): Lazy<Result<List<T>>> =
+    lazy { runCatching { list.map { it.value } } }
+```
+
+### test
+
+Lazily tests the value produced by `this` Lazy against a predicate and returns a Lazy boolean. 
+
+```kotlin
+fun <T> Lazy<T>.test(predicate: (T) -> Boolean): Lazy<Boolean> =
+    lazy { predicate(value) }
 ```
 
 ---

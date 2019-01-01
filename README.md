@@ -141,14 +141,14 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 
 </details>
 
-### Lazy
+### Map
 
 <details>
 <summary>View contents</summary>
 
-* [`concat`](#concat)
-* [`partition`](#partition)
+* [`merge`](#merge)
 * [`pick`](#pick)
+* [`split`](#split)
 * [`toEnumMap`](#toenummap)
 
 </details>
@@ -1429,29 +1429,18 @@ fun <T> Lazy<T>.test(predicate: (T) -> Boolean): Lazy<Boolean> =
 
 ## Map
 
-### concat
+### merge
 
 Concatenates multiple maps into a single map, preserving the order of the passed in entries.
 
 > Note there is expensive list concatenation in this snippet. 
 
 ```kotlin
-fun <K, V> concat(first: Map<K, V>, vararg others: Map<K, V>): Map<K, List<V>> =
+fun <K, V> merge(first: Map<K, V>, vararg others: Map<K, V>): Map<K, List<V>> =
     first.mapValues { entry -> listOf(entry.value) }.toMap(LinkedHashMap()).apply {
         others.forEach {
             map -> map.forEach { key, value ->  merge(key, listOf(value)) { list1, list2 -> list1 + list2 } }
         }
-    }
-```
-
-### partition
-
-Splits the original map into a pair of maps, where the first map has all entries for which the predicate evaluated to `true`, and the second contains all other entries.
-
-```kotlin
-fun <K, V> Map<K, V>.partition(predicate: (K) -> Boolean): Pair<Map<K, V>, Map<K, V>> =
-    (HashMap<K, V>() to HashMap<K, V>()).apply {
-        forEach { key, value -> if (predicate(key)) first.put(key, value) else second.put(key, value) }
     }
 ```
 
@@ -1463,6 +1452,17 @@ Picks the map entries which have keys contained in the given list.
 fun <K, V> Map<K, V>.pick(list: List<K>): Map<K, V> =
     list.toSet().run {
         filterKeys { contains(it) }
+    }
+```
+
+### split
+
+Splits the original map into a pair of maps, where the first map has all entries for which the predicate evaluated to `true`, and the second contains all other entries.
+
+```kotlin
+fun <K, V> Map<K, V>.split(predicate: (K) -> Boolean): Pair<Map<K, V>, Map<K, V>> =
+    (HashMap<K, V>() to HashMap<K, V>()).apply {
+        forEach { key, value -> if (predicate(key)) first.put(key, value) else second.put(key, value) }
     }
 ```
 

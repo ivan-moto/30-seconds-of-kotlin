@@ -141,6 +141,18 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 
 </details>
 
+### Lazy
+
+<details>
+<summary>View contents</summary>
+
+* [`concat`](#concat)
+* [`partition`](#partition)
+* [`pick`](#pick)
+* [`toEnumMap`](#toenummap)
+
+</details>
+
 ---
 
 ## List

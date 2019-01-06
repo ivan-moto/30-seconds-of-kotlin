@@ -10,6 +10,8 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 
 ### List
 
+`Functions operating on the most fundamental data structure: List.`
+
 <details>
 <summary>View contents</summary>
 
@@ -98,6 +100,8 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 
 ### Function
 
+`Kotlin's first class functions make it easy to manipulate functions.`
+
 <details>
 <summary>View contents</summary>
 
@@ -125,6 +129,8 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 
 ### Lazy
 
+`Functions operating on Kotlin's built in [Lazy](https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/util/Lazy.kt] type.`
+
 <details>
 <summary>View contents</summary>
 
@@ -142,6 +148,8 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 </details>
 
 ### Map
+
+'Functions operating on Maps.'
 
 <details>
 <summary>View contents</summary>

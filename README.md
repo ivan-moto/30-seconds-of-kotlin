@@ -129,7 +129,7 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 
 ### Lazy
 
-`Functions operating on Kotlin's built in [Lazy](https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/util/Lazy.kt] type.`
+`Functions operating on Kotlin's built in Lazy type.`
 
 <details>
 <summary>View contents</summary>
@@ -149,7 +149,7 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 
 ### Map
 
-'Functions operating on Maps.'
+`Functions operating on Maps.`
 
 <details>
 <summary>View contents</summary>

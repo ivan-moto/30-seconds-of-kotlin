@@ -206,9 +206,9 @@ fun <T> any(list: List<T>, predicate: (T) -> Boolean): Boolean =
 
 Splits list into two groups. For every element in a list, if the corresponding boolean in another list is true, add the element to the first group; otherwise, add it to the second group. 
 
-```
-For example:
-bifurcate(['beep', 'boop', 'foo', 'bar'], [true, true, false, true]) // [ ['beep', 'boop', 'bar'], ['foo'] ]
+```kotlin
+// For example:
+bifurcate(listOf("beep", "boop", "foo", "bar"), listOf(true, true, false, true)) // [[beep, boop, bar], [foo]]
 ```
 
 ```kotlin
@@ -232,9 +232,9 @@ fun <T> bifurcateBy(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, Lis
 
 Chunks a list into smaller lists of a specified size. The last list in the resulting list may have less elements than the given size.
 
-```
-For example:
-chunk([1, 2, 3, 4, 5], 2) // [[1,2],[3,4],[5]]
+```kotlin
+// For example:
+chunk(listOf(1, 2, 3, 4, 5), 2) // [[1 ,2], [3, 4], [5]]
 ```
 
 ```kotlin
@@ -269,10 +269,10 @@ fun <T> compact(list: List<T?>): List<T> {
 
 Groups the elements of a list based on the given function and returns the count of elements in each group.
 
-```
-For example:
-countBy([6.1, 4.2, 6.3], Math.floor) // {4: 1, 6: 2}
-countBy(['one', 'two', 'three'], 'length') // {3: 2, 5: 1}
+```kotlin
+// For example:
+countBy(listOf(6.1, 4.2, 6.3)) { floor(it) } // {4.0: 1, 6.0: 2}
+countBy(listOf("one", "two", "three")) { it.length } // {3: 2, 5: 1}
 ```
 
 ```kotlin
@@ -315,9 +315,9 @@ fun <T, U> corresponds(first: List<T>, second: List<U>, predicate: (T, U) -> Boo
 
 Creates a cross product: forming a pair from each value in the first list to each value in the second list. 
 
-```
-For example:
-crossProduct([1, 2], ['a', 'b']); // [[1, 'a'], [1, 'b'], [2, 'a'], [2, 'b']]
+```kotlin
+// For example:
+crossProduct(listOf(1, 2), listOf('a', 'b')) // [[1, 'a'], [1, 'b'], [2, 'a'], [2, 'b']]
 ```
 
 ```kotlin
@@ -329,9 +329,9 @@ fun <T, U> crossProduct(first: List<T>, second: List<U>): List<Pair<T, U>> =
 
 Returns a list of elements contained in the first list that are not present in the second list. 
 
-```
-For example:
-difference([1, 2, 3], [1, 2, 4]) // [3]
+```kotlin
+// For example:
+difference(listOf(1, 2, 3), listOf(1, 2, 4)) // [3]
 ```
 
 ```kotlin
@@ -417,9 +417,9 @@ fun <T> endsWith(list: List<T>, subList: List<T>): Boolean =
 
 Returns every nth element in a list.
 
-```
-For example:
-everyNth([1, 2, 3, 4, 5, 6], 2) // [ 2, 4, 6 ]
+```kotlin
+// For example:
+everyNth(listOf(1, 2, 3, 4, 5, 6), 2) // [ 2, 4, 6 ]
 ```
 
 ```kotlin
@@ -465,9 +465,9 @@ fun <T> filterNonUnique(list: List<T>): List<T> =
 
 Filters out the non-unique values in an list, after applying the given function. 
 
-```
-For example: 
-filterNonUniqueBy([a, b, c], letter => 1) // [a]
+```kotlin
+// For example: 
+filterNonUniqueBy(listOf('a', 'b', 'c')) { 1 } // [a]
 ```
 
 ```kotlin
@@ -506,10 +506,11 @@ fun <T> forEachRight(list: List<T>, action: (T) -> Unit): Unit =
 
 Groups the elements of a list based on the given function.
 
-```
-For example:
-groupBy([6.1, 4.2, 6.3], Math.floor); // {4: [4.2], 6: [6.1, 6.3]}
-groupBy(['one', 'two', 'three'], 'length'); // {3: ['one', 'two'], 5: ['three']}
+```kotlin
+// For example:
+groupBy(listOf(6.1, 4.2, 6.3)) { floor(it) } // {4.0: [4.2], 6.0: [6.1, 6.3]}
+groupBy(listOf("one", "two", "three")) { it.length } // {3: [one, two], 5: [three]}
+
 ```
 
 ```kotlin
@@ -553,10 +554,10 @@ fun <T> head(list: List<T>): T =
 Returns all indices in a list where a given value is present.
 If the value never occurs, returns an empty list. 
 
-```
-For example:
-indexOfAll([1, 2, 3, 1, 2, 3], 1) // [0, 3]
-indexOfAll([1, 2, 3], 4) // []
+```kotlin
+// For example:
+indexOfAll(listOf(1, 2, 3, 1, 2, 3), 1) // [0, 3]
+indexOfAll(listOf(1, 2, 3), 4) // []
 ```
 
 ```kotlin
@@ -577,8 +578,8 @@ fun <T> initial(list: List<T>): List<T> =
 
 Initializes a 2D list of given width and height and value.
 
-```
-For exmaple:
+```kotlin
+// For exmaple:
 initialize2DList(2, 2, 0) // [[0, 0], [0, 0]]
 ```
 
@@ -591,9 +592,9 @@ fun <T> initialize2DList(width: Int, height: Int, value: T): List<List<T>> =
 
 Initializes a list containing the numbers in the specified range, where `start` and `stop` are inclusive with their common difference `step`.
 
-```
-For example:
-initializeListWithRange(0, 9, 2); // [0, 2, 4, 6, 8]
+```kotlin
+// For example:
+initializeListWithRange(0, 9, 2) // [0, 2, 4, 6, 8]
 ```
 
 ```kotlin
@@ -605,9 +606,9 @@ fun initializeListWithRange(start: Int, stop: Int, step: Int): List<Int> =
 
 Initializes and fills a list with the specified value.
 
-```
-For example:
-initializeListWithValue(5, 2); // [2, 2, 2, 2, 2]
+```kotlin
+// For example:
+initializeListWithValue(5, 2) // [2, 2, 2, 2, 2]
 ```
 
 ```kotlin
@@ -619,9 +620,9 @@ fun <T> initializeListWithValue(size: Int, value: T): List<T> =
 
 Returns a list of elements that exist in both lists.
 
-```
-For example:
-intersection([1, 2, 3], [4, 3, 2]) // [2, 3]
+```kotlin
+// For example:
+intersection(listOf(1, 2, 3), listOf(4, 3, 2)) // [2, 3]
 ```
 
 ```kotlin
@@ -633,9 +634,9 @@ fun <T> intersection(first: List<T>, second: List<T>): List<T> =
 
 Returns a list of elements that exist in both lists, after applying the provided function to each element of both.
 
-```
-For example:
-intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor) // [2.1]
+```kotlin
+// For example:
+intersectionBy(listOf(2.1, 1.2), listOf(2.3, 3.4)) { floor(it) } // [2.1]
 ```
 
 ```kotlin
@@ -649,9 +650,9 @@ fun <T, R> intersectionBy(first: List<T>, second: List<T>, function: (T) -> R): 
 
 Returns a list of elements that exist in both lists, using a provided comparator function.
 
-```
-For example:
-intersectionWith([1, 1.2, 1.5, 3, 0], [1.9, 3, 0, 3.9], (a, b) => Math.round(a) === Math.round(b)) // [1.5, 3, 0]
+```kotlin
+// For example:
+intersectionWith(listOf(1.0, 1.2, 1.5, 3.0, 0.0), listOf(1.9, 3.0, 0.0, 3.9)) { a, b -> round(a) == round(b) } // [1.5, 3.0, 0.0]
 ```
 
 ```kotlin
@@ -705,9 +706,9 @@ fun <T> longest(list: List<Collection<T>>): Collection<T>? =
 
 Maps the elements of a list to the result of applying a function to that element.
  
-```
-For example:
-mapObject([1, 2, 3], a => a * a) // { 1: 1, 2: 4, 3: 9 }
+```kotlin
+// For example:
+mapObject(listOf(1, 2, 3)) { it * it } // { 1: 1, 2: 4, 3: 9 }
 ```
 
 ```kotlin
@@ -739,10 +740,10 @@ fun <T : Comparable<T>> minN(list: List<T>, n: Int): List<T> =
 
 Returns `true` if the provided predicate function returns `false` for all elements in a list, `false` otherwise.
 
-```
-For example:
-none([0, 1, 3, 0], x => x == 2) // true
-none([-1, 1, 2], x => x <= 0); // false
+```kotlin
+// For example:
+none(listOf(0, 1, 3, 0)) { it == 2} // true
+none(listOf(-1, 1, 2)) { it <= 0 } // false
 ```
 
 ```kotlin
@@ -782,10 +783,9 @@ fun <T, U, R> product(first: List<T>, second: List<U>, function: (T, U) -> R): L
 
 Filters out the elements specified.
 
-```
-For example:
-let list = ['a', 'b', 'c', 'a', 'b', 'c']
-pull(list, 'a', 'c') // [ 'b', 'b' ]
+```kotlin
+// For example:
+pull(listOf('a', 'b', 'c', 'a', 'b', 'c'), 'a', 'c') // [b, b]
 ```
 
 ```kotlin
@@ -799,10 +799,9 @@ fun <T> pull(list: List<T>, vararg elements: T): List<T> =
 
 Filters out the indices specified.
 
-```
-For example:
-let list = ['a', 'b', 'c', 'd']
-let pulled = pullAtIndex(list, [1, 3]) // [ 'a', 'c' ] 
+```kotlin
+// For example:
+pullAtIndex(listOf('a', 'b', 'c', 'd'), 1, 2) // [a, d] 
 ```
 
 ```kotlin
@@ -816,10 +815,9 @@ fun <T> pullAtIndex(list: List<T>, vararg indices: Int): List<T> =
 
 Filters out the elements specified and returns them.
 
-```
-For example:
-let list = ['a', 'b', 'c', 'd'];
-pullAtValue(list, ['b', 'd', 'e']) // [ 'b', 'd' ]
+```kotlin
+// For example:
+pullAtValue(listOf('a', 'b', 'c', 'd'), 'b', 'd', 'e') // [b, d]
 ```
 
 ```kotlin
@@ -835,9 +833,9 @@ fun <T> pullAtValue(list: List<T>, vararg elements: T): List<T> =
 This function is also commonly known as `scan`.
 Applies a function against an accumulator and each element in the list (from left to right), returning a new list of successively calculated values.
 
-```
-For example:
-reduceSuccessive([1, 2, 3, 4, 5, 6], 0, (acc, val) => acc + val) // [1, 3, 6, 10, 15, 21]
+```kotlin
+// For example:
+reduceSuccessive(listOf(1, 2, 3, 4, 5, 6), 0) { acc, int -> acc + int } // [1, 3, 6, 10, 15, 21]
 ```
 
 ```kotlin
@@ -852,10 +850,10 @@ fun <T, R> reduceSuccessive(list: List<T>, identity: R, function: (R, T) -> R): 
 
 Return a new list which removes elements from the list for which the given predicate returns `true`.
 
-```
-For example:
-reject([1, 2, 3, 4, 5], x => x % 2 === 0) // [1, 3, 5]
-reject(['Apple', 'Pear', 'Kiwi', 'Banana'], word => word.length > 4); // ['Pear', 'Kiwi']
+```kotlin
+// For example:
+reject(listOf(1, 2, 3, 4, 5)) { it % 2 == 0 } // [1, 3, 5]
+reject(listOf("Apple", "Pear", "Kiwi", "Banana")) { it.length > 4 } // [Pear, Kiwi]
 ```
 
 ```kotlin
@@ -867,9 +865,9 @@ fun <T> reject(list: List<T>, predicate: (T) -> Boolean): List<T> =
 
 Returns a new list which removes elements from the list for which the given predicate returns `false`.
 
-```
-For example:
-remove([1, 2, 3, 4], n => n % 2 === 0) // [2, 4]
+```kotlin
+// For example:
+remove(listOf(1, 2, 3, 4)) { it % 2 == 0 } // [2, 4]
 ```
 
 ```kotlin
@@ -945,11 +943,11 @@ fun <T> segmentLength(list: List<T>, predicate: (T) -> Boolean): Int =
 
 Returns a new list with changes in the contents of this list, removing or replacing existing elements and/or adding new elements.
 
-```
-For example:
-const names = ['alpha', 'bravo', 'charlie'];
-const namesAndDelta = shank(names, 1, 0, 'delta'); // [ 'alpha', 'delta', 'bravo', 'charlie' ]
-const namesNoBravo = shank(names, 1, 1); // [ 'alpha', 'charlie' ]
+```kotlin
+// For example:
+val names = listOf("alpha", "bravo", "charlie")
+shank(names, 1, 0, "delta") // [alpha, delta, bravo, charlie]
+shank(names, 1, 1) // [alpha, charlie]
 ```
 
 `start` - Index at which to start changing the list
@@ -999,11 +997,11 @@ fun <T, R> slideBy(list: List<T>, classifier: (T) -> R): List<List<T>> {
 Returns `1` if the list is sorted in ascending order, `-1` if it is sorted in descending order or `0` if it is not sorted.
 A list with all equal values is considered sorted ascending. 
 
-```
+```kotlin
 For example:
-isSorted([0, 1, 2, 2]); // 1
-isSorted([4, 3, 2]); // -1
-isSorted([4, 3, 5]); // 0
+isSorted(listOf(0, 1, 2, 2)) // 1
+isSorted(listOf(4, 3, 2)) // -1
+isSorted(listOf(4, 3, 5)) // 0
 ```
 
 ```kotlin
@@ -1031,6 +1029,7 @@ fun <T> span(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
 Splits the given list at the first element which satisfies the predicate. 
 
 ```kotlin
+// For example:
 splitAt(listOf(1, 2, 3, 4, 5)) { it == 3 } // [[1, 2], [3, 4, 5]]
 ```
 
@@ -1052,10 +1051,10 @@ fun <T> startsWith(list: List<T>, subList: List<T>): Boolean =
 
 Returns the symmetric difference between two lists, without filtering out duplicate values.
 
-```
-For example:
-symmetricDifference([1, 2, 3], [1, 2, 4]); // [3, 4]
-symmetricDifference([1, 2, 2], [1, 3, 1]); // [2, 2, 3]
+```kotlin
+// For example:
+symmetricDifference(listOf(1, 2, 3), listOf(1, 2, 4)) // [3, 4]
+symmetricDifference(listOf(1, 2, 2), listOf(1, 3, 1)) // [2, 2, 3]
 ```
 
 ```kotlin
@@ -1067,9 +1066,9 @@ fun <T> symmetricDifference(first: List<T>, second: List<T>): List<T> =
 
 Returns the symmetric difference between two lists, after applying the provided function to each element of both.
 
-```
-For example:
-symmetricDifferenceBy([2.1, 1.2], [2.3, 3.4], Math.floor) // [1.2, 3.4]
+```kotlin
+// For example:
+symmetricDifferenceBy(listOf(2.1, 1.2), listOf(2.3, 3.4)) { floor(it) } // [1.2, 3.4]
 ```
 
 ```kotlin 
@@ -1084,13 +1083,13 @@ fun <T, R> symmetricDifferenceBy(first: List<T>, second: List<T>, function: (T) 
 
 Returns the symmetric difference between two lists, using a provided function as a comparator.
 
-```
-For example:
+```kotlin
+// For example:
 symmetricDifferenceWith(
-  [1, 1.2, 1.5, 3, 0],
-  [1.9, 3, 0, 3.9],
-  (a, b) => Math.round(a) === Math.round(b)
-) // [1, 1.2, 1.9, 3.9]
+  listOf(1.0, 1.2, 1.5, 3.0, 0.0),
+  listOf(1.9, 3.0, 0.0, 3.9),
+  { a, b -> round(a) == round(b) }
+) // [1.0, 1.2, 3.9]
 ```
 
 ```kotlin
@@ -1132,9 +1131,9 @@ fun <T> takeRight(list: List<T>, n: Int): List<T> =
 
 Returns the last `n` elements satisfying the given predicate. 
 
-```
-For example:
-takeRightWhile([1, 2, 3, 4], n => n >= 3) // [3, 4]
+```kotlin
+// For example:
+takeRightWhile(listOf(1, 2, 3, 4)) { it >= 3 } // [3, 4]
 ```
 
 ```kotlin
@@ -1146,9 +1145,9 @@ fun <T> takeRightWhile(list: List<T>, predicate: (T) -> Boolean): List<T> =
 
 Returns the first `n` elements satisfying the given predicate. 
 
-```
-For example:
-takeWhile([1, 2, 3, 4], n => n < 3) // [1, 2]
+```kotlin
+// For example:
+takeWhile(listOf(1, 2, 3, 4)) { it < 3 } // [1, 2]
 ```
 
 ```kotlin
@@ -1160,9 +1159,9 @@ fun <T> takeWhile(list: List<T>, predicate: (T) -> Boolean): List<T> =
 
 Returns every element that exists in any of the two lists, removing duplicates. 
 
-```
-For example:
-union([1, 2, 3], [4, 3, 2]) // [1, 2, 3, 4]
+```kotlin
+// For example:
+union(listOf(1, 2, 3), listOf(4, 3, 2)) // [1, 2, 3, 4]
 ```
 
 ```kotlin
@@ -1174,9 +1173,9 @@ fun <T> union(first: List<T>, second: List<T>): List<T> =
 
 Returns every element that exists in any of the two lists once, after applying the provided function to each element of both.
 
-```
-For example:
-unionBy([2.1], [1.2, 2.3], Math.floor) // [2.1, 1.2]
+```kotlin
+// For example:
+unionBy(listOf(2.1), listOf(1.2, 2.3)) { floor(it) } // [2.1, 1.2]
 ```
 
 ```kotlin
@@ -1190,9 +1189,9 @@ fun <T, R> unionBy(first: List<T>, second: List<T>, function: (T) -> R): List<T>
 
 Returns every element that exists in any of the two lists once, using a provided comparator function.
 
-```
-For example:
-unionWith([1, 1.2, 1.5, 3, 0], [1.9, 3, 0, 3.9], (a, b) => Math.round(a) === Math.round(b)) // [1.5, 3, 0, 3.9]
+```kotlin
+// For example:
+unionWith(listOf(1.0, 1.2, 1.5, 3.0, 0.0), listOf(1.9, 3.0, 0.0, 3.9)) { a, b -> round(a) == round(b) } // [1.5, 3.0, 0.0, 3.9]
 ```
 
 ```kotlin
@@ -1224,9 +1223,9 @@ fun <T, U> zip(first: List<T>, second: List<U>): List<Pair<T, U>> =
 Returns a list of pairs built from the elements of each list with the same index, using the default value if any list is shorter.
 The returned list has length of the longest list
 
-```
-For example:
-zipAll([1, 2, 3], 0, [a, b, c, d, e], z) // [[1, a], [2, b], [3, c], [0, d], [0, e]]
+```kotlin
+// For example:
+zipAll(listOf(1, 2, 3), 0, listOf('a', 'b', 'c', 'd', 'e'), 'z') // [[1, a], [2, b], [3, c], [0, d], [0, e]]
 ```
 
 ```kotlin
@@ -1301,6 +1300,7 @@ fun <T> allOf(vararg predicates: (T) -> Boolean): (T) -> Boolean =
 Returns a function which first applies `this` function to the input, and then applies the `after` function to the result. 
 
 ```kotlin
+// For example:
 String::decapitalize andThen String::hashCode
 ```
 
@@ -1338,6 +1338,7 @@ fun <T, U, R> applySecond(function: (T) -> (U) -> R, second: U): (T) -> R = { t 
 Returns a function which first applies the `before` function to the input, and then applies `this` function to the result. 
 
 ```kotlin
+// For example:
 String::hashCode compose String::decapitalize
 ```
 

@@ -1,3 +1,5 @@
+import kotlin.math.max
+
 fun <T> all(list: List<T>, predicate: (T) -> Boolean): Boolean =
     list.all(predicate)
 
@@ -18,6 +20,8 @@ fun <T> bifurcateBy(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, Lis
 
 fun <T> chunk(list: List<T>, size: Int): List<List<T>> =
     list.chunked(size)
+
+fun <T> combinations(list: List<T>): List<List<T>> = TODO()
 
 fun <T> compact(list: List<T?>): List<T> {
     fun isTruthy(t: T?): Boolean = when(t) {
@@ -42,6 +46,9 @@ fun <T> countOccurrences(list: List<T>, target: T): Int =
 
 fun <T> concat(first: List<T>, vararg others: List<T>): List<T> =
     first.asSequence().plus(others.asSequence().flatten()).toList()
+
+fun <T, U> corresponds(first: List<T>, second: List<U>, predicate: (T, U) -> Boolean): Boolean =
+    (first.size == second.size) && (first.zip(second).all { (t, u) -> predicate(t, u) })
 
 fun <T, U> crossProduct(first: List<T>, second: List<U>): List<Pair<T, U>> =
     first.flatMap { a -> second.map { b -> a to b } }
@@ -77,6 +84,20 @@ fun <T> endsWith(list: List<T>, subList: List<T>): Boolean =
 
 fun <T> everyNth(list: List<T>, nth: Int): List<T> =
     list.windowed(nth, nth, partialWindows = false).map { it.last() }
+
+fun <T> existsUnique(list: List<T>, predicate: (T) -> Boolean): Boolean {
+    var exists = false
+    for (t in list) {
+        if (predicate(t)) {
+            if (exists) {
+                return false
+            } else {
+                exists = true
+            }
+        }
+    }
+    return exists
+}
 
 fun <T> filterNonUnique(list: List<T>): List<T> =
     list.distinct()
@@ -136,6 +157,9 @@ fun <T, R> intersectionBy(first: List<T>, second: List<T>, function: (T) -> R): 
 fun <T> intersectionWith(first: List<T>, second: List<T>, function: (T, T) -> Boolean): List<T> =
     first.filter { a -> second.any { b -> function(a, b) } }
 
+fun <T> intersperse(list: List<T>, element: T): List<T> =
+    List(list.size) { index -> listOf(list[index], element) }.flatten().dropLast(1)
+
 fun <T> join(list: List<T>, separator: String = ", "): String =
     list.joinToString(separator)
 
@@ -160,8 +184,7 @@ fun <T> none(list: List<T>, predicate: (T) -> Boolean): Boolean =
 fun <T> nthElement(list: List<T>, n: Int): T =
    list[n]
 
-fun <T> offset(list: List<T>, offset: Int): List<T> =
-    list.slice(offset until list.size) + list.slice(0 until offset)
+fun <T> permutations(list: List<T>): List<List<T>> = TODO()
 
 fun <T> partition(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
     list.partition(predicate)
@@ -195,17 +218,40 @@ fun <T> reject(list: List<T>, predicate: (T) -> Boolean): List<T> =
 fun <T> remove(list: List<T>, predicate: (T) -> Boolean): List<T> =
     list.filter(predicate)
 
+fun <T> rotateLeft(list: List<T>, n: Int): List<T> =
+    list.drop(n % list.size) + list.take(n % list.size)
+
+fun <T> rotateRight(list: List<T>, n: Int): List<T> =
+    list.takeLast(n % list.size) + list.dropLast(n % list.size)
+
 fun <T> sample(list: List<T>): T =
     list.random()
 
 fun <T> sampleSize(list: List<T>, n: Int): List<T> =
     list.shuffled().take(n)
 
+fun <T> segmentLength(list: List<T>, predicate: (T) -> Boolean): Int =
+    list.fold(0 to 0) { (longest, current), t -> if (predicate(t)) longest to current + 1 else max(longest, current) to 0 }.first
+
 fun <T> shank(list: List<T>, start: Int = 0, deleteCount: Int = 0, vararg elements: T): List<T> =
     list.slice(0 until start) + elements + list.drop(start + deleteCount)
 
 fun <T> shuffle(list: List<T>): List<T> =
     list.shuffled()
+
+fun <T, R> slideBy(list: List<T>, classifier: (T) -> R): List<List<T>> {
+    tailrec fun slideBy_(list: List<T>, acc: MutableList<List<T>>): MutableList<List<T>> =
+        if (list.isEmpty())
+            acc
+        else
+            slideBy_(list.dropWhile { classifier(it) == classifier(list.first()) },  acc.apply { add(list.takeWhile { classifier(it) == classifier(list.first()) } )} )
+    return slideBy_(list, mutableListOf())
+}
+
+fun <T> segmentLength1(list: List<T>, predicate: (T) -> Boolean): Int =
+    list.windowed(max(list.size, 1), partialWindows = true)
+        .map { it.takeWhile(predicate).size }
+        .max() ?: 0
 
 fun <T : Comparable<T>> sortOrder(list: List<T>): Int =
     with(list.sorted()) {
@@ -215,6 +261,12 @@ fun <T : Comparable<T>> sortOrder(list: List<T>): Int =
             else -> 0
         }
     }
+
+fun <T> span(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
+    list.takeWhile(predicate) to list.dropWhile(predicate)
+
+fun <T> splitAt(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
+    list.takeWhile { !predicate(it) } to list.dropWhile { !predicate(it) }
 
 fun <T> startsWith(list: List<T>, subList: List<T>): Boolean =
     list.take(subList.size) == subList

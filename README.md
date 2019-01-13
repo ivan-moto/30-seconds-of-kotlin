@@ -4,6 +4,8 @@
 
 > Curated collection of useful Kotlin 1.3 snippets that you can understand quickly, using only stdlib functionality.
 
+*Snippets are optimized for readability and comprehension, sometimes at the expense of performance.* 
+
 ## Table of Contents
 
 Note: This project is inspired by, but in no way affiliated with, [30 Seconds of Code](https://github.com/30-seconds/30-seconds-of-code).
@@ -25,6 +27,7 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 * [`countBy`](#countby)
 * [`countOccurrences`](#countoccurrences)
 * [`concat`](#concat)
+* [`corresponds`](#corresponds)
 * [`crossProduct`](#crossproduct)
 * [`difference`](#difference)
 * [`differenceBy`](#differenceby)
@@ -36,6 +39,7 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 * [`dropWhile`](#dropwhile)
 * [`endsWith`](#endsWith)
 * [`everyNth`](#everynth)
+* [`existsUnique`](#existsunique)
 * [`filterNonUnique`](#filternonunique)
 * [`filterNonUniqueBy`](#filternonuniqueby)
 * [`findLast`](#findlast)
@@ -53,6 +57,7 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 * [`intersection`](#intersection)
 * [`intersectionBy`](#intersectionby)
 * [`intersectionWith`](#intersectionwith)
+* [`intersperse`](#intersperse)
 * [`join`](#join)
 * [`last`](#last)
 * [`longest`](#longest)
@@ -61,7 +66,6 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 * [`minN`](#minn)
 * [`none`](#none)
 * [`nthElement`](#nthelement)
-* [`offset`](#offset)
 * [`partition`](#partition)
 * [`product`](#product)
 * [`pull`](#pull)
@@ -70,11 +74,17 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 * [`reduceSuccessive`](#reducesuccessive)
 * [`reject`](#reject)
 * [`remove`](#remove)
+* [`rotateLeft`](#rotateleft)
+* [`rotateRight`](#rotateright)
 * [`sample`](#sample)
 * [`sampleSize`](#samplesize)
+* [`segmentLength`](#segmentLength)
 * [`shank`](#shank)
 * [`shuffle`](#shuffle)
+* [`slideBy`](#slideby)
 * [`sortOrder`](#sortorder)
+* [`span`](#span)
+* [`splitAt`](#splitat)
 * [`startsWith`](#startswith)
 * [`symmetricDifference`](#symmetricdifference)
 * [`symmetricDifferenceBy`](#symmetricdifferenceby)
@@ -288,6 +298,19 @@ fun <T> concat(first: List<T>, vararg others: List<T>): List<T> =
     first.asSequence().plus(others.asSequence().flatten()).toList()
 ```
 
+### corresponds
+
+Tests whether every element of the first list relates to the corresponding element in the second list by satisfying the given predicate. 
+
+```kotlin
+// For example:
+corresponds(listOf(1, 2, 3), listOf(2, 3, 4)) { i1, i2 -> i1 == i2 - 1 } // true
+```
+```kotlin
+fun <T, U> corresponds(first: List<T>, second: List<U>, predicate: (T, U) -> Boolean): Boolean =
+    (first.size == second.size) && (first.zip(second).all { (t, u) -> predicate(t, u) })
+```
+
 ### crossProduct
 
 Creates a cross product: forming a pair from each value in the first list to each value in the second list. 
@@ -402,6 +425,31 @@ everyNth([1, 2, 3, 4, 5, 6], 2) // [ 2, 4, 6 ]
 ```kotlin
 fun <T> everyNth(list: List<T>, nth: Int): List<T> =
     list.windowed(nth, nth, partialWindows = false).map { it.last() }
+```
+
+### existsUnique
+
+Checks if a unique element exists such that the predicate holds. 
+
+```kotlin
+// For example:
+existsUnique(listOf(1, 2, 3, 4, 5, 3)) { it == 3 } // false
+```
+
+```kotlin
+fun <T> existsUnique(list: List<T>, predicate: (T) -> Boolean): Boolean {
+    var exists = false
+    for (t in list) {
+        if (predicate(t)) {
+            if (exists) {
+                return false
+            } else {
+                exists = true
+            }
+        }
+    }
+    return exists
+}
 ```
 
 ### filterNonUnique
@@ -611,6 +659,20 @@ fun <T> intersectionWith(first: List<T>, second: List<T>, function: (T, T) -> Bo
     first.filter { a -> second.any { b -> function(a, b) } }
 ```
 
+### intersperse
+
+Inserts an element between all elements of the given list. 
+
+```kotlin
+// For example:
+intersperse(listOf('a', 'b', 'c', 'd'), '0') // [a, 0, b, 0, c, 0, d]
+```
+
+```kotlin
+fun <T> intersperse(list: List<T>, element: T): List<T> =
+    List(list.size) { index -> listOf(list[index], element) }.flatten().dropLast(1)
+```
+
 ### join
 
 Joins all elements of a list into a string.
@@ -696,21 +758,6 @@ If the index is out of bounds, throws `IndexOutOfBoundsException`.
 ```kotlin
 fun <T> nthElement(list: List<T>, n: Int): T =
    list[n]
-```
-
-### offset
-
-Returns a new list which moves the specified amount of elements to the end of the list.
-If the offset is less than 0 or greater than the size of the list, then `IndexOutOfBoundsException` will be thrown. 
-```
-For example:
-offset([1, 2, 3, 4, 5], 2); // [3, 4, 5, 1, 2]
-offset([1, 2, 3, 4, 5], 5); // [1, 2, 3, 4, 5]
-```
-
-```kotlin
-fun <T> offset(list: List<T>, offset: Int): List<T> =
-    list.slice(offset until list.size) + list.slice(0 until offset)
 ```
 
 ### partition
@@ -830,6 +877,38 @@ fun <T> remove(list: List<T>, predicate: (T) -> Boolean): List<T> =
     list.filter(predicate)
 ```
 
+### rotateLeft
+
+Returns a new list which circular rotates the elements by the specified distance to the left direction.
+This implementation throws an exception when n is negative, though in reality a negative rotation to the left
+can be considered a positive rotation to the right. 
+
+```kotlin
+// For example:
+rotateLeft(listOf(1, 2, 3, 4, 5), 2) // [3, 4, 5, 1, 2]
+```
+
+```kotlin
+fun <T> rotateLeft(list: List<T>, n: Int): List<T> =
+    list.slice(n until list.size) + list.slice(0 until n)
+```
+
+### rotateRight
+
+Returns a new list which circular rotates the elements by the specified distance to the right direction.
+This implementation throws an exception when n is negative, though in reality a negative rotation to the right
+can be considered a positive rotation to the left.
+
+```
+// For example:
+rotateRight(listOf(1, 2, 3, 4, 5), 2) // [4, 5, 1, 2, 3]
+```
+
+```kotlin
+fun <T> rotateRight(list: List<T>, n: Int): List<T> =
+    list.takeLast(n % list.size) + list.dropLast(n % list.size)
+```
+
 ### sample
 
 Returns a random element from a list.
@@ -846,6 +925,20 @@ Gets `n` random elements from a list, up to the size of the list.
 ```kotlin
 fun <T> sampleSize(list: List<T>, n: Int): List<T> =
     list.shuffled().take(n)
+```
+
+### segmentLength
+
+Computes length of longest segment within the given list whose elements all satisfy some predicate.
+
+```kotlin
+// For example:
+segmentLength(listOf('d', 'e', 'f', 'a', 'b', 'c', 'd')) { char -> char == 'a' || char == 'b' || char == 'c' } // 3
+```
+
+```kotlin
+fun <T> segmentLength(list: List<T>, predicate: (T) -> Boolean): Int =
+    list.fold(0 to 0) { (longest, current), t -> if (predicate(t)) longest to current + 1 else max(longest, current) to 0 }.first
 ```
 
 ### shank
@@ -878,6 +971,29 @@ fun <T> shuffle(list: List<T>): List<T> =
     list.shuffled()
 ```
 
+### slideBy
+
+Slides a non-overlapping window of a variable size over the given list. 
+
+Each window contains elements that are equal according to the given classifier function. 
+
+```kotlin
+// For example:
+slideBy(listOf(1, 2, 3, 3, 3, 4, 5)) { it } // [[1], [2], [3, 3, 3], [4], [5]]
+slideBy(listOf(1, 2, 3, 10, 12, 5, 7, 20, 29)) { it / 10 } //  [[1, 2, 3], [10, 12], [5, 7], [20, 29]]
+```
+
+```kotlin
+fun <T, R> slideBy(list: List<T>, classifier: (T) -> R): List<List<T>> {
+    tailrec fun slideBy_(list: List<T>, acc: MutableList<List<T>>): MutableList<List<T>> =
+        if (list.isEmpty())
+            acc
+        else
+            slideBy_(list.dropWhile { classifier(it) == classifier(list.first()) },  acc.apply { add(list.takeWhile { classifier(it) == classifier(list.first()) } )} )
+    return slideBy_(list, mutableListOf())
+}
+```
+
 ### sortOrder
 
 Returns `1` if the list is sorted in ascending order, `-1` if it is sorted in descending order or `0` if it is not sorted.
@@ -899,6 +1015,28 @@ fun <T : Comparable<T>> sortOrder(list: List<T>): Int =
             else -> 0
         }
     }
+```
+
+### span
+
+Returns a pair where the first element is the longest prefix of elements that satisfies the given predicate, and the second element is the remainder.
+
+```kotlin
+fun <T> span(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> = 
+    list.takeWhile(predicate) to list.dropWhile(predicate)
+```
+
+### splitAt
+
+Splits the given list at the first element which satisfies the predicate. 
+
+```kotlin
+splitAt(listOf(1, 2, 3, 4, 5)) { it == 3 } // [[1, 2], [3, 4, 5]]
+```
+
+```kotlin
+fun <T> splitAt(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
+    list.takeWhile { !predicate(it) } to list.dropWhile { !predicate(it) }
 ```
 
 ### startsWith

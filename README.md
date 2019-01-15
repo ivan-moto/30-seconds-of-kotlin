@@ -147,6 +147,7 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 * [`asSequence`](#assequence)
 * [`filter`](#filter)
 * [`flatMap`](#flatmap)
+* [`forever`](#forever)
 * [`getOrDefault`](#getordefault)
 * [`lift`](#lift)
 * [`map`](#map)
@@ -1483,10 +1484,7 @@ fun <T, U, R> unlift(function: (Result<T>) -> (Result<U>) -> Result<R>): (T) -> 
 Transforms a lazy value into a lazy list, i.e. a Sequence. 
 
 ```kotlin
-fun <T> Lazy<T>.asSequence(): Sequence<T> = object : Iterator<T> {
-        override fun hasNext(): Boolean = true
-        override fun next(): T = value
-    }.asSequence()
+fun <T> Lazy<T>.asSequence(): Sequence<T> = sequence { yield(value) }
 ```
 
 ### filter
@@ -1506,6 +1504,17 @@ Applies a function that produces a Lazy to the value produced by `this` Lazy.
 fun <T, R> Lazy<T>.flatMap(function: (T) -> Lazy<R>): Lazy<R> =
     lazy { function(value).value }
 
+```
+
+### forever
+
+Returns an infinite lazy list, i.e. a Sequence, which always produces the given lazy's value.
+
+```kotlin
+fun <T> Lazy<T>.forever(): Sequence<T> = object : Iterator<T> {
+    override fun hasNext(): Boolean = true
+    override fun next(): T = value
+}.asSequence()
 ```
 
 ### getOrDefault

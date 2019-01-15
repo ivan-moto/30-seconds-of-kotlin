@@ -1,13 +1,15 @@
-fun <T> Lazy<T>.asSequence(): Sequence<T> = object : Iterator<T> {
-        override fun hasNext(): Boolean = true
-        override fun next(): T = value
-    }.asSequence()
+fun <T> Lazy<T>.asSequence(): Sequence<T> = sequence { yield(value) }
 
 fun <T> Lazy<T>.filter(predicate: (T) -> Boolean): Lazy<Result<T>> =
     lazy { if (predicate(value)) Result.success(value) else Result.failure(IllegalArgumentException("Predicate evaluated to false.")) }
 
 fun <T, R> Lazy<T>.flatMap(function: (T) -> Lazy<R>): Lazy<R> =
     lazy { function(value).value }
+
+fun <T> Lazy<T>.forever(): Sequence<T> = object : Iterator<T> {
+    override fun hasNext(): Boolean = true
+    override fun next(): T = value
+}.asSequence()
 
 fun <R, T : R> Lazy<T>.getOrDefault(default: R): R =
     runCatching { value }.getOrDefault(default)

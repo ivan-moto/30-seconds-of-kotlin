@@ -6,9 +6,9 @@
 
 *Snippets are optimized for readability and comprehension, sometimes at the expense of performance.* 
 
-## Table of Contents
+**Note:** This project is inspired by, but in no way affiliated with, [30 Seconds of Code](https://github.com/30-seconds/30-seconds-of-code).
 
-Note: This project is inspired by, but in no way affiliated with, [30 Seconds of Code](https://github.com/30-seconds/30-seconds-of-code).
+## Table of Contents
 
 ### List
 
@@ -171,6 +171,14 @@ Note: This project is inspired by, but in no way affiliated with, [30 Seconds of
 * [`toEnumMap`](#toenummap)
 
 </details>
+
+#### Related projects
+
+* [30 Seconds of Code (JavaScript)](https://github.com/30-seconds/30-seconds-of-code)
+* [30 Seconds of Java](https://github.com/shekhargulati/30-seconds-of-java)
+* [30 Seconds of React](https://github.com/30-seconds/30-seconds-of-react)
+* [30 Seconds of Python](https://github.com/kriadmin/30-seconds-of-python-code)
+* [30 Seconds of PHP](https://github.com/appzcoder/30-seconds-of-php-code)
 
 ---
 
@@ -1640,14 +1648,6 @@ inline fun <reified K : Enum<K>, V> KClass<K>.toEnumMap(function: (K) -> V): Enu
 ```
 
 ---
-
-#### Related projects
-
-* [30 Seconds of Code](https://github.com/30-seconds/30-seconds-of-code)
-* [30 Seconds of Java](https://github.com/shekhargulati/30-seconds-of-java)
-* [30 Seconds of React](https://github.com/30-seconds/30-seconds-of-react)
-* [30 Seconds of Python](https://github.com/kriadmin/30-seconds-of-python-code)
-* [30 Seconds of PHP](https://github.com/appzcoder/30-seconds-of-php-code)
 
 ## License
 

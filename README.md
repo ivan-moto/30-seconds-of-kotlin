@@ -67,6 +67,7 @@
 * [`none`](#none)
 * [`nthElement`](#nthelement)
 * [`partition`](#partition)
+* [`permutations`](#permutations)
 * [`product`](#product)
 * [`pull`](#pull)
 * [`pullAtIndex`](#pullatindex)
@@ -777,6 +778,33 @@ Groups the elements into two lists, the first containing all elements for which 
 ```kotlin
 fun <T> partition(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
     list.partition(predicate)
+```
+
+### permutations
+
+Computes all the permutations of the given list. List elements are treated unique based on their index, so a list with equal elements will return duplicate lists. 
+
+> Note: this implementation usses non stack safe recursion
+
+``kotlin
+// For example:
+permutations(listOf(1, 2, 3)) // [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
+``
+
+```kotlin
+fun <T> permutations(list: List<T>): List<List<T>> {
+    fun <T> List<T>.removeAtIndex(index: Int): List<T> = take(index) + drop(index + 1)
+    fun <T> List<T>.prepend(element: T): List<T> = listOf(element) + this
+    return  when {
+        list.isEmpty() -> emptyList()
+        list.size == 1 -> listOf(list)
+        else -> list.foldIndexed(mutableListOf()) { index, acc, t ->
+            acc.apply {
+                addAll(permutations(list.removeAtIndex(index)).map { it.prepend(t) })
+            }
+        }
+    }
+}
 ```
 
 ### product
@@ -1597,7 +1625,7 @@ fun <T> Lazy<T>.test(predicate: (T) -> Boolean): Lazy<Boolean> =
 
 Concatenates multiple maps into a single map, preserving the order of the passed in entries.
 
-> Note there is expensive list concatenation in this snippet. 
+> Note: there is expensive list concatenation in this snippet. 
 
 ```kotlin
 fun <K, V> merge(first: Map<K, V>, vararg others: Map<K, V>): Map<K, List<V>> =

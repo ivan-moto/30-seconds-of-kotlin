@@ -184,7 +184,19 @@ fun <T> none(list: List<T>, predicate: (T) -> Boolean): Boolean =
 fun <T> nthElement(list: List<T>, n: Int): T =
    list[n]
 
-fun <T> permutations(list: List<T>): List<List<T>> = TODO()
+fun <T> permutations(list: List<T>): List<List<T>> {
+    fun <T> List<T>.removeAtIndex(index: Int): List<T> = take(index) + drop(index + 1)
+    fun <T> List<T>.prepend(element: T): List<T> = listOf(element) + this
+    return  when {
+        list.isEmpty() -> emptyList()
+        list.size == 1 -> listOf(list)
+        else -> list.foldIndexed(mutableListOf()) { index, acc, t ->
+            acc.apply {
+                addAll(permutations(list.removeAtIndex(index)).map { it.prepend(t) })
+            }
+        }
+    }
+}
 
 fun <T> partition(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
     list.partition(predicate)

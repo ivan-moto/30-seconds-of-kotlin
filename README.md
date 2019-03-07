@@ -784,7 +784,7 @@ fun <T> partition(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<
 
 Computes all the permutations of the given list. List elements are treated unique based on their index, so a list with equal elements will return duplicate lists. 
 
-> Note: this implementation usses non stack safe recursion
+> Note: this implementation uses non stack safe recursion
 
 ``kotlin
 // For example:
@@ -1035,7 +1035,7 @@ Returns `1` if the list is sorted in ascending order, `-1` if it is sorted in de
 A list with all equal values is considered sorted ascending. 
 
 ```kotlin
-For example:
+// For example:
 isSorted(listOf(0, 1, 2, 2)) // 1
 isSorted(listOf(4, 3, 2)) // -1
 isSorted(listOf(4, 3, 5)) // 0

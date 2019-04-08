@@ -176,6 +176,7 @@
 #### Related projects
 
 * [30 Seconds of Code (JavaScript)](https://github.com/30-seconds/30-seconds-of-code)
+* [30 Seconds of Knowledge](https://github.com/petrovicstefanrs/30_seconds_of_knowledge)
 * [30 Seconds of Java](https://github.com/shekhargulati/30-seconds-of-java)
 * [30 Seconds of React](https://github.com/30-seconds/30-seconds-of-react)
 * [30 Seconds of Python](https://github.com/kriadmin/30-seconds-of-python-code)

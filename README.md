@@ -784,7 +784,7 @@ fun <T> partition(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<
 
 ### partitioningBy
 
-Partitions the input elements accourding to predicate and organizes them into a `Map<Boolean, List<T>`.
+Partitions the input elements according to a predicate and organizes them into a `Map<Boolean, List<T>`.
 Inspired by the JDK's `Collectors::partitioningBy`.
 
 ```kotlin

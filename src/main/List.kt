@@ -201,6 +201,9 @@ fun <T> permutations(list: List<T>): List<List<T>> {
 fun <T> partition(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
     list.partition(predicate)
 
+fun <T> partitioningBy(list: List<T>, predicate: (T) -> Boolean): Map<Boolean, List<T>> = 
+    list.groupBy(predicate)
+
 fun <T, U, R> product(first: List<T>, second: List<U>, function: (T, U) -> R): List<R> =
     first.flatMap { t -> second.map { u -> function(t, u) } }
 

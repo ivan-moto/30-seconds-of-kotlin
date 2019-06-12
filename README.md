@@ -67,6 +67,7 @@
 * [`none`](#none)
 * [`nthElement`](#nthelement)
 * [`partition`](#partition)
+* [`partitioningBy`](#partitioningBy)
 * [`permutations`](#permutations)
 * [`product`](#product)
 * [`pull`](#pull)
@@ -779,6 +780,16 @@ Groups the elements into two lists, the first containing all elements for which 
 ```kotlin
 fun <T> partition(list: List<T>, predicate: (T) -> Boolean): Pair<List<T>, List<T>> =
     list.partition(predicate)
+```
+
+### partitioningBy
+
+Partitions the input elements accourding to predicate and organizes them into a `Map<Boolean, List<T>`.
+Inspired by the JDK's `Collectors::partitioningBy`.
+
+```kotlin
+fun <T> partitioningBy(list: List<T>, predicate: (T) -> Boolean): Map<Boolean, List<T>> = 
+    list.groupBy(predicate)
 ```
 
 ### permutations

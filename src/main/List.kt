@@ -28,7 +28,7 @@ fun <T> compact(list: List<T?>): List<T> {
     fun isTruthy(t: T?): Boolean = when(t) {
         null -> false
         is Boolean -> t
-        is Double -> t != Double.NaN
+        is Double -> !t.isNaN()
         is Number -> t.toInt() != 0
         is String -> !t.isEmpty()
         is Array<*> -> t.size != 0

@@ -2,7 +2,7 @@ ext["kotlintestVersion"] = "3.1.10"
 ext["slf4jVersion"] = "1.7.25"
 
 plugins {
-    kotlin("jvm") version "1.3.11"
+    kotlin("jvm") version "1.3.40"
 }
 
 group = "com.30secondsofkotlin"

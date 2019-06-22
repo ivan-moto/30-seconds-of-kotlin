@@ -1,3 +1,4 @@
+import java.util.Objects
 import kotlin.math.max
 
 fun <T> all(list: List<T>, predicate: (T) -> Boolean): Boolean =
@@ -41,8 +42,8 @@ fun <T> compact(list: List<T?>): List<T> {
 fun <T, K> countBy(list: List<T>, function: (T) -> K): Map<K, Int> =
     list.groupingBy(function).eachCount()
 
-fun <T> countOccurrences(list: List<T>, target: T): Int =
-    list.count { it == target }
+fun <T> countOccurrences(list: List<T>, target: T, equals: (T, T) -> Boolean = Objects::equals): Int =
+    list.count { equals(target, it) }
 
 fun <T> concat(first: List<T>, vararg others: List<T>): List<T> =
     first.asSequence().plus(others.asSequence().flatten()).toList()

@@ -294,11 +294,11 @@ fun <T, K> countBy(list: List<T>, function: (T) -> K): Map<K, Int> =
 
 ### countOccurrences
 
-Counts the occurrences of a value in a list.
+Counts the occurrences of a value in a list, using a provided equality function.
 
 ```kotlin
-fun <T> countOccurrences(list: List<T>, target: T): Int =
-    list.count { it == target }
+fun <T> countOccurrences(list: List<T>, target: T, equals: (T, T) -> Boolean = Objects::equals): Int =
+    list.count { equals(target, it) }
 ```
 
 ### concat

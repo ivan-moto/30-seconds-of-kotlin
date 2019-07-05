@@ -29,6 +29,12 @@ class ListTest: StringSpec() {
             }
         }
 
+        "cycle - given list x, consecutive x sized chunks of returned sequence should each equal x" {
+            forAll { list: List<String> ->
+                cycle(list).take(1_000).chunkedThatHandlesSize0(list.size).all { it == list.take(it.size) }
+            }
+        }
+        
         "difference - returned list returns nothing contained in second list" {
             forAll { first: List<String>, second: List<String> ->
                 difference(first, second).filter { second.contains(it) }.isEmpty()
@@ -40,4 +46,7 @@ class ListTest: StringSpec() {
                 .shouldBe(listOf("H", "He", "Hel", "Hell", "Hello", "Hello,", "Hello, ", "Hello, W", "Hello, Wo", "Hello, Wor", "Hello, Worl", "Hello, World", "Hello, World!"))
         }
     }
+
+    private fun <T> Sequence<T>.chunkedThatHandlesSize0(size: Int): Sequence<List<T>> =
+        if (size == 0) emptySequence() else chunked(size)
 }

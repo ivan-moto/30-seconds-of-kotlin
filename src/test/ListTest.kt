@@ -37,7 +37,7 @@ class ListTest: StringSpec() {
         
         "difference - returned list returns nothing contained in second list" {
             forAll { first: List<String>, second: List<String> ->
-                difference(first, second).filter { second.contains(it) }.isEmpty()
+                difference(first, second).none { second.contains(it) }
             }
         }
 

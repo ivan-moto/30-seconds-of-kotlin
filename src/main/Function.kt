@@ -26,6 +26,9 @@ fun <T, R> diverge(t: T, predicate: (T) -> Boolean, onSuccess: (T) -> R, onFailu
 
 fun <T> identity(): (T) -> T = { it }
 
+fun <T> isIn(vararg values: (T)): (T) -> Boolean =
+    { t -> values.any { it == t } }
+
 fun <T, U, R> lift(function: (T) -> (U) -> R): (Result<T>) -> (Result<U>) -> Result<R> =
     { resultT -> { resultU -> resultT.mapCatching(function).mapCatching { resultU.map(it) }.mapCatching { it.getOrThrow() } } }
 

@@ -128,6 +128,7 @@
 * [`curry`](#curry)
 * [`diverge`](#diverge)
 * [`identity`](#identity)
+* [`isIn`](#isIn)
 * [`lift`](#lift)
 * [`memoize`](#memoize)
 * [`noneOf`](#noneof)
@@ -1442,6 +1443,22 @@ Returns a function that always returns its input argument.
 
 ```kotlin
 fun <T> identity(): (T) -> T = { it }
+```
+
+### isIn
+
+Returns a predicate that tests if an object is equal to at least one of the given values.
+
+```kotlin
+// For example:
+val is123 = isIn(1, 2, 3)
+is123(1) // true
+is123(4) // false
+```
+
+```kotlin
+fun <T> isIn(vararg values: (T)): (T) -> Boolean =
+    { t -> values.any { it == t } }
 ```
 
 ### lift

@@ -29,6 +29,7 @@
 * [`concat`](#concat)
 * [`corresponds`](#corresponds)
 * [`crossProduct`](#crossproduct)
+* [`cycle`](#cycle)
 * [`difference`](#difference)
 * [`differenceBy`](#differenceby)
 * [`differenceWith`](#differencewith)
@@ -335,6 +336,21 @@ crossProduct(listOf(1, 2), listOf('a', 'b')) // [[1, 'a'], [1, 'b'], [2, 'a'], [
 ```kotlin
 fun <T, U> crossProduct(first: List<T>, second: List<U>): List<Pair<T, U>> =
     first.flatMap { a -> second.map { b -> a to b } }
+```
+
+### cycle
+
+Produces a `Sequence` which cycles indefinitely through the given list. 
+
+```kotlin
+// For example:
+cycle(listOf(1, 2, 3)) // 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3...
+```
+
+```kotlin
+fun <T> cycle(list: List<T>): Sequence<T> = 
+    generateSequence(0) { (it + 1) % list.size }
+        .map { list[it] }
 ```
 
 ### difference

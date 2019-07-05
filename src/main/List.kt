@@ -54,6 +54,10 @@ fun <T, U> corresponds(first: List<T>, second: List<U>, predicate: (T, U) -> Boo
 fun <T, U> crossProduct(first: List<T>, second: List<U>): List<Pair<T, U>> =
     first.flatMap { a -> second.map { b -> a to b } }
 
+fun <T> cycle(list: List<T>): Sequence<T> = 
+    generateSequence(0) { (it + 1) % list.size }
+        .map { list[it] }
+
 fun <T> difference(first: List<T>, second: List<T>): List<T> =
     (first subtract second).toList()
 

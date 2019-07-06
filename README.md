@@ -1497,12 +1497,12 @@ Returns a retrying version of the given function.
 > This implementation is based on Pierre-Yves Saumont's implementation in [The Joy of Kotlin](https://www.manning.com/books/the-joy-of-kotlin)
 
 ```kotlin
-fun <T, R> retry(times: Int, delay: Int, timeUnit: TimeUnit = TimeUnit.MILLISECONDS, function: (T) -> R): (T) -> Result<R> {
+fun <T, R> retry(times: Int, delay: Duration, function: (T) -> R): (T) -> Result<R> {
     tailrec fun retry(input: T, result: Result<R>, times: Int): () -> Result<R> {
         if (result.isSuccess || times <= 0) {
             return { result }
         } else {
-            Thread.sleep(TimeUnit.MILLISECONDS.convert(delay.toLong(), timeUnit))
+            Thread.sleep(delay.toMillis())
             return retry(input, runCatching { function(input) }, times - 1)
         }
     }
@@ -1531,11 +1531,11 @@ fun <T, U, R> ((T) -> (U) -> R).swapArgs(): (U) -> (T) -> R = { u -> { t -> this
 Times a function and returns the time as well as the result. 
 
 ```kotlin
-fun <R> time(timeUnit: TimeUnit = TimeUnit.NANOSECONDS, function: () -> R): Pair<Long, Result<R>> {
+fun <R> time(function: () -> R): Pair<Duration, Result<R>> {
     val start = System.nanoTime()
     val result = runCatching(function)
     val time = System.nanoTime() - start
-    return timeUnit.convert(time, TimeUnit.NANOSECONDS) to result
+    return Duration.ofNanos(time) to result
 }
 ```
 

@@ -1,5 +1,5 @@
+import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.TimeUnit
 
 fun <T> allOf(vararg predicates: (T) -> Boolean): (T) -> Boolean =
     { t -> predicates.all { it(t) } }
@@ -19,7 +19,7 @@ fun <T, R> constant(result: R): (T) -> R = { result }
 
 fun <T, U, R> ((T, U) -> R).curry(): (T) -> (U) -> R = { t -> { u -> this(t, u) } }
 
-fun <T, R> delay(time: Int, timeUnit: TimeUnit = TimeUnit.SECONDS, function: (T) -> R): (T) -> R = TODO()
+fun <T, R> delay(delay: Duration, function: (T) -> R): (T) -> R = TODO()
 
 fun <T, R> diverge(t: T, predicate: (T) -> Boolean, onSuccess: (T) -> R, onFailure: (T) -> R): R =
     if (predicate(t)) onSuccess(t) else onFailure(t)
@@ -40,29 +40,31 @@ fun <T, R> memoize(function: (T) -> R): (T) -> R =
 fun <T> noneOf(vararg predicates: (T) -> Boolean): (T) -> Boolean =
     { t -> !predicates.any { it(t) } }
 
-fun <T, R> periodic(time: Int, timeUnit: TimeUnit = TimeUnit.SECONDS, function: (T) -> R): (T) -> Sequence<R> = TODO()
-
-fun <T, R> retry(times: Int, delay: Int, timeUnit: TimeUnit = TimeUnit.MILLISECONDS, function: (T) -> R): (T) -> Result<R> {
+fun <T, R> retry(times: Int, delay: Duration, function: (T) -> R): (T) -> Result<R> {
     tailrec fun retry(input: T, result: Result<R>, times: Int): () -> Result<R> {
         if (result.isSuccess || times <= 0) {
             return { result }
         } else {
-            Thread.sleep(TimeUnit.MILLISECONDS.convert(delay.toLong(), timeUnit))
+            Thread.sleep(delay.toMillis())
             return retry(input, runCatching { function(input) }, times - 1)
         }
     }
     return { t -> retry(t, runCatching { function(t) }, times - 1)() }
 }
 
+fun <T, R> scheduleAtFixedRate(period: Duration, function: (T) -> R): (T) -> Sequence<R> = TODO()
+
+fun <T, R> scheduleWithFixedDelay(delay: Duration, function: (T) -> R): (T) -> Sequence<R> = TODO()
+
 fun <T, R> sequence(list: List<(T) -> R>): (T) -> List<R> = { t -> list.map { it(t) } }
 
 fun <T, U, R> ((T) -> (U) -> R).swapArgs(): (U) -> (T) -> R = { u -> { t -> this(t)(u) } }
 
-fun <R> time(timeUnit: TimeUnit = TimeUnit.NANOSECONDS, function: () -> R): Pair<Long, Result<R>> {
+fun <R> time(function: () -> R): Pair<Duration, Result<R>> {
     val start = System.nanoTime()
     val result = runCatching(function)
     val time = System.nanoTime() - start
-    return timeUnit.convert(time, TimeUnit.NANOSECONDS) to result
+    return Duration.ofNanos(time) to result
 }
 
 fun <T, U, R> ((T) -> (U) -> R).uncurry(): (T, U) -> R = { t, u -> this(t)(u) }

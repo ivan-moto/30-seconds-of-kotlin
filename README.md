@@ -350,7 +350,7 @@ cycle(listOf(1, 2, 3)) // 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3...
 
 ```kotlin
 fun <T> cycle(list: List<T>): Sequence<T> = 
-    generateSequence(0) { (it + 1) % list.size }
+    generateSequence(if (list.isNotEmpty()) 0 else null) { (it + 1) % list.size }
         .map { list[it] }
 ```
 

@@ -1,3 +1,7 @@
+<div style="text-align:center;background-color:mediumseagreen">
+  <h3>Support this and other projects from Ivan Mwiruki <a href="https://paypal.me/IvanMwiruki"><b>here</b></a></h3>
+</div>
+
 <img src="media/logo.png" alt="Kotlin">
 
 # 30 seconds of Kotlin

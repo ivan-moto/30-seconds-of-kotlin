@@ -2,7 +2,7 @@ ext["kotlintestVersion"] = "3.1.10"
 ext["slf4jVersion"] = "1.7.25"
 
 plugins {
-    kotlin("jvm") version "1.3.40"
+    kotlin("jvm") version "1.3.50"
 }
 
 group = "com.30secondsofkotlin"
@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     compile(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-RC2")
     testCompile("io.kotlintest:kotlintest-runner-junit5:${project.rootProject.ext["kotlintestVersion"]}")
     testRuntime("org.slf4j:slf4j-nop:${project.rootProject.ext["slf4jVersion"]}")
 }

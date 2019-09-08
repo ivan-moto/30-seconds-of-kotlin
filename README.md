@@ -1,5 +1,5 @@
 <div align="center">
-  <h4>Support this and other projects from Ivan Mwiruki <a href="https://paypal.me/IvanMwiruki"><b>here</b></a></h4>
+  <h4>Support this and other projects from Ivan Mwiruki <a href="https://paypal.me/IvanMwiruki"><b>here</b></a></h4>.
 </div>
 
 ---

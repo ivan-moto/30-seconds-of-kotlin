@@ -14,12 +14,15 @@ repositories {
 
 dependencies {
     compile(kotlin("stdlib"))
+    compile(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-RC2")
     testCompile("io.kotlintest:kotlintest-runner-junit5:${project.rootProject.ext["kotlintestVersion"]}")
     testRuntime("org.slf4j:slf4j-nop:${project.rootProject.ext["slf4jVersion"]}")
 }
 
-kotlin.sourceSets {
-    getByName("main").kotlin.srcDirs("src/main")
-    getByName("test").kotlin.srcDirs("src/test")
+kotlin {
+    sourceSets {
+        getByName("main").kotlin.srcDirs("src/main")
+        getByName("test").kotlin.srcDirs("src/test")
+    }
 }

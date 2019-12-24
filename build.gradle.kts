@@ -13,11 +13,11 @@ repositories {
 }
 
 dependencies {
-    compile(kotlin("stdlib"))
-    compile(kotlin("reflect"))
+    implementation(kotlin("stdlib"))
+    implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-RC2")
-    testCompile("io.kotlintest:kotlintest-runner-junit5:${project.ext["kotlintestVersion"]}")
-    testRuntime("org.slf4j:slf4j-nop:${project.ext["slf4jVersion"]}")
+    testImplementation("io.kotlintest:kotlintest-runner-junit5:${project.ext["kotlintestVersion"]}")
+    testRuntimeOnly("org.slf4j:slf4j-nop:${project.ext["slf4jVersion"]}")
 }
 
 kotlin {

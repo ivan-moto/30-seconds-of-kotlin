@@ -1,9 +1,3 @@
-<div align="center">
-  <h4>Support this and other projects from Ivan Mwiruki <a href="https://paypal.me/IvanMwiruki">here</a>.</h4>
-</div>
-
----
-
 <img src="media/logo.png" alt="Kotlin">
 
 # 30 seconds of Kotlin
